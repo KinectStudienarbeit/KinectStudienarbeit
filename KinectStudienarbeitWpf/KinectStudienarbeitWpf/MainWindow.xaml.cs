@@ -34,7 +34,7 @@ namespace KinectStudienarbeitWpf
             MainKinect = KinectSensor.KinectSensors.FirstOrDefault();
             if (MainKinect == null)     //if no sensor is connected show the message
             {
-                MessageBox.Show("Kein Kinect-Sensor erkannt!");
+                MessageBox.Show("No Kinect-Sensor found!");
             }
             KinectInit(); //initilize the sensor
 
