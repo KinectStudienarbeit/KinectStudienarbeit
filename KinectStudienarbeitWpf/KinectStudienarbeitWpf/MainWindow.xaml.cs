@@ -57,6 +57,7 @@ namespace KinectStudienarbeitWpf
         }
 
         //deals with initilization of the kinect
+        //very well
         void KinectInit()
         {
             if (MainKinect == null)
