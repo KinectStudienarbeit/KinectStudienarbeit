@@ -27,7 +27,7 @@ namespace KinectStudienarbeitWpf
         {
             InitializeComponent();
 
-            //create a listener for status changes of thr kinect
+            //create a listener for status changes of the kinect
             KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
 
             //try to select the first kinect connected atm (it is possible to use more than one at the same time)
@@ -36,7 +36,7 @@ namespace KinectStudienarbeitWpf
             {
                 MessageBox.Show("No Kinect-Sensor found!");
             }
-            KinectInit(); //initilize the sensor
+            KinectInit(); //initialize the sensor
 
         }
 
@@ -46,7 +46,7 @@ namespace KinectStudienarbeitWpf
             switch (e.Status)
             {
                 case KinectStatus.Connected:
-                    MessageBox.Show("New Kinect konnected");
+                    MessageBox.Show("New Kinect connected");
                     MainKinect = e.Sensor;
                     KinectInit();
                     break;
@@ -56,7 +56,7 @@ namespace KinectStudienarbeitWpf
             }
         }
 
-        //deals with initilization of the kinect
+        //deals with initialization of the kinect
         void KinectInit()
         {
             if (MainKinect == null)
