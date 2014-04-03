@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,81 +11,134 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Microsoft.Kinect;
+using System.Windows.Markup;
+using Microsoft.Win32;
 
-namespace KinectStudienarbeitWpf
+namespace WPFTest
 {
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        KinectSensor MainKinect;
+        BlenderResourceDictionary mainDictionary = null;
+        BlenderModel mainModel = null;
 
         public MainWindow()
         {
             InitializeComponent();
+        }
 
-            //create a listener for status changes of the kinect
-            KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
-
-            //try to select the first kinect connected atm (it is possible to use more than one at the same time)
-            MainKinect = KinectSensor.KinectSensors.FirstOrDefault();
-            if (MainKinect == null)     //if no sensor is connected show the message
-            {
-                MessageBox.Show("No Kinect-Sensor found!");
-            }
-            KinectInit(); //initialize the sensor
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
 
         }
 
-        //deals with status changes of the kinect
-        void KinectSensors_StatusChanged(object sender, StatusChangedEventArgs e)
+       
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            switch (e.Status)
+            if (mainModel == null) return;
+
+            if (Radio_Rotate.IsChecked.Value)
             {
-                case KinectStatus.Connected:
-                    MessageBox.Show("New Kinect connected");
-                    MainKinect = e.Sensor;
-                    KinectInit();
-                    break;
-                default:
-                    MessageBox.Show("Kinect status: " + e.Status);
-                    break;
+                switch (e.Key)
+                {
+                    case Key.W:
+                        mainModel.rotate(-20, 0, 0);
+                        break;
+
+                    case Key.S:
+                        mainModel.rotate(20, 0, 0);
+                        break;
+
+                    case Key.D:
+                        mainModel.rotate(0, 20, 0);
+                        break;
+
+                    case Key.A:
+                        mainModel.rotate(0, -20, 0);
+                        break;
+
+                    case Key.E:
+                        mainModel.rotate(0, 0, -20);
+                        break;
+
+                    case Key.Q:
+                        mainModel.rotate(0, 0, 20);
+                        break;
+                }
+            }
+            else if (Radio_Translate.IsChecked.Value)
+            {
+                switch (e.Key)
+                {
+                    case Key.W:
+                        mainModel.translate(0, 0.5, 0);
+                        break;
+
+                    case Key.S:
+                        mainModel.translate(0, -0.5, 0);
+                        break;
+
+                    case Key.D:
+                        mainModel.translate(0.5, 0, 0);
+                        break;
+
+                    case Key.A:
+                        mainModel.translate(-0.5, 0, 0);
+                        break;
+
+                    case Key.E:
+                        mainModel.translate(0, 0, -0.5);
+                        break;
+
+                    case Key.Q:
+                        mainModel.translate(0, 0, 0.5);
+                        break;
+                }
             }
         }
 
-        //deals with initialization of the kinect
-        void KinectInit()
+        private void Button_Browse_Click(object sender, RoutedEventArgs e)
         {
-            if (MainKinect == null)
-                return;     //no kinect is connected so just stop
-            //adds a listener for the AllFramesReady event (color, depth and skeletal frame ready)
-            MainKinect.AllFramesReady += kinect_AllFramesReady;
-            MainKinect.ColorStream.Enable();    //enables the color stream (normal camera)
-            MainKinect.Start();     //starts the sensor
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "XAML files (*.xaml)|*.xaml";
+            openFileDialog.ShowDialog();
+            Textbox_File.Text = openFileDialog.FileName;
         }
 
-        //do stuff with the image when all frames are ready
-        void kinect_AllFramesReady(object sender, AllFramesReadyEventArgs e)
+        private void Button_Load_Click(object sender, RoutedEventArgs e)
         {
-            using (ColorImageFrame frame = e.OpenColorImageFrame())
+            if (!File.Exists(Textbox_File.Text))
             {
-                if (frame == null)  //do nothing if a frame is dropped
-                    return;
-
-                //the image will be stored in a byte array
-                byte[] pixels = new byte[frame.PixelDataLength];
-                //copy the kinect image into the byte array
-                frame.CopyPixelDataTo(pixels);
-
-                int stride = frame.Width * 4; //because of R G B + blank
-
-                ImageColorStream.Source = BitmapSource.Create(frame.Width, frame.Height, 96, 96, PixelFormats.Bgr32, null, pixels, stride);
+                MessageBox.Show("Could not find file " + Textbox_File.Text + "!");
+            }
+            else
+            {
+                mainDictionary = new BlenderResourceDictionary(Textbox_File.Text);
+                foreach (String s in mainDictionary.keyList)
+                {
+                    ComboBox_Models.Items.Add(s);
+                }
+                ComboBox_Models.SelectedItem = ComboBox_Models.Items[0];
+                MessageBox.Show("File loaded successfully!");
             }
 
+        }
+
+        private void ComboBox_Models_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (mainModel != null)
+            {
+                mainModel.removeFromViewport(this.mainViewPort);
+            }
+
+            mainModel = new BlenderModel(mainDictionary, ComboBox_Models.SelectedItem as String);
+            mainModel.addToViewPort(this.mainViewPort);
         }
 
     }
