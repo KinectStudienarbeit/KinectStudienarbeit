@@ -9,6 +9,9 @@ using System.Windows.Media.Media3D;
 
 namespace KinectStudienarbeitWpf
 {
+    /// <summary>
+    /// Makes translation and rotation of Blender-exported Models easier
+    /// </summary>
     class BlenderModel
     {
         private ModelVisual3D modelVisual3D;
@@ -17,12 +20,21 @@ namespace KinectStudienarbeitWpf
         private double offsetY = 0;
         private double offsetZ = 0;
 
-
+        /// <summary>
+        /// Loads a model from a BlenderResourceDictionary
+        /// </summary>
+        /// <param name="blenderResourceDictionary">A BlenderResourceDictionary to load the model from</param>
+        /// <param name="index">the name/key/index of the model  to load</param>
         public BlenderModel(BlenderResourceDictionary blenderResourceDictionary, String index)
             : this(blenderResourceDictionary.resourceDictionary, index)
         {
         }
 
+        /// <summary>
+        /// Loads a model from a (WPF-) ResourceDictionary
+        /// </summary>
+        /// <param name="resourceDictionary">A (WPF-)  ResourceDictionary to load the model from</param>
+        /// <param name="index">the name/key/index of the model to load</param>
         public BlenderModel(ResourceDictionary resourceDictionary, String index)
         {
             Model3DGroup model3DGroup = resourceDictionary[index] as Model3DGroup;
@@ -30,17 +42,30 @@ namespace KinectStudienarbeitWpf
             modelVisual3D.Content = model3DGroup;
         }
 
-        public void addToViewPort(Viewport3D viewport)
+        /// <summary>
+        /// adds the model to the given Viewport
+        /// </summary>
+        /// <param name="viewport">The used Viewport to add the model to</param>
+        public void addToViewport(Viewport3D viewport)
         {
             viewport.Children.Add(modelVisual3D);
         }
 
+        /// <summary>
+        /// Removes the model from a Viewport
+        /// </summary>
+        /// <param name="viewport">The Viewport where the model has to be removed</param>
         public void removeFromViewport(Viewport3D viewport)
         {
             viewport.Children.Remove(modelVisual3D);
         }
 
-
+        /// <summary>
+        /// Rotates the model around its axis
+        /// </summary>
+        /// <param name="x">Rotation around the x-axis in degrees</param>
+        /// <param name="y">Rotation around the y-axis in degrees</param>
+        /// <param name="z">Rotation around the z-axis in degrees</param>
         public void rotate(double x, double y, double z)
         {
             MatrixTransform3D matrixTransform = new MatrixTransform3D();
@@ -50,6 +75,12 @@ namespace KinectStudienarbeitWpf
             modelVisual3D.Transform = transformations;
         }
 
+        /// <summary>
+        /// Translates (moves) the model in the 3D-space
+        /// </summary>
+        /// <param name="x">Movement in x-direction</param>
+        /// <param name="y">Movement in y-direction</param>
+        /// <param name="z">Movement in z-direction</param>
         public void translate(double x, double y, double z)
         {
             MatrixTransform3D matrixTransform = new MatrixTransform3D();
@@ -61,8 +92,8 @@ namespace KinectStudienarbeitWpf
             modelVisual3D.Transform = transformations;
         }
 
-        Matrix3D CalculateRotationMatrix(double x, double y, double z)      //taken from http://stackoverflow.com/questions/2042214/wpf-3d-rotate-a-model-around-its-own-axes
-                                                                            //adjusted for offset by Dawid Rusin
+        private Matrix3D CalculateRotationMatrix(double x, double y, double z)      //taken from http://stackoverflow.com/questions/2042214/wpf-3d-rotate-a-model-around-its-own-axes
+                                                                                    //adjusted for offset by Dawid Rusin
         {
             Matrix3D matrix = new Matrix3D();
             matrix.RotateAt(new Quaternion(new Vector3D(1, 0, 0), x), new Point3D(offsetX, offsetY, offsetZ));
@@ -72,7 +103,7 @@ namespace KinectStudienarbeitWpf
             return matrix;
         }
 
-        Matrix3D calculateTranslationMatrix(double x, double y, double z)
+        private Matrix3D calculateTranslationMatrix(double x, double y, double z)
         {
             Matrix3D matrix = new Matrix3D();
 

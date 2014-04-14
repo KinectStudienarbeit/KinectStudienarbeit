@@ -37,6 +37,9 @@ namespace KinectStudienarbeitWpf
             initializeKinect();
         }
 
+        /// <summary>
+        /// Initilizes the Kinect
+        /// </summary>
         private void initializeKinect()
         {
             mainKinect = KinectSensor.KinectSensors.FirstOrDefault();
@@ -45,7 +48,12 @@ namespace KinectStudienarbeitWpf
 
         }
 
-        void KinectSensors_StatusChanged(object sender, StatusChangedEventArgs e)
+        /// <summary>
+        /// Deals with status changes of the Kinect
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void KinectSensors_StatusChanged(object sender, StatusChangedEventArgs e)
         {
             if (e.Status == KinectStatus.Connected)
             {
@@ -55,7 +63,11 @@ namespace KinectStudienarbeitWpf
         }
 
 
-
+        /// <summary>
+        /// Deals with the keyboard input
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (mainModel == null) return;
@@ -155,7 +167,7 @@ namespace KinectStudienarbeitWpf
             }
 
             mainModel = new BlenderModel(mainDictionary, ComboBox_Models.SelectedItem as String);
-            mainModel.addToViewPort(this.mainViewPort);
+            mainModel.addToViewport(this.mainViewPort);
         }
 
     }

@@ -9,6 +9,9 @@ using System.IO;
 
 namespace KinectStudienarbeitWpf
 {
+    /// <summary>
+    /// Creates a Wpf Ressource Dictionary out of a Blender-exported file
+    /// </summary>
     class BlenderResourceDictionary
     {
         private const String regexPattern1 = "(<Model3DGroup>(.*?)</Model3DGroup>)|(<MaterialGroup(.*?)</MaterialGroup>)|(<Model3DGroup x:key=\"(.*?)\">(.*?)</Model3DGroup)";
@@ -20,10 +23,19 @@ namespace KinectStudienarbeitWpf
         public ResourceDictionary resourceDictionary;
         public List<String> keyList;
 
+        /// <summary>
+        /// Creates a Resource Dictionary, removes all Transformations
+        /// </summary>
+        /// <param name="filepath">Path to the Blender-exported file</param>
         public BlenderResourceDictionary(String filepath) : this(filepath, true)
         {
         }
 
+        /// <summary>
+        /// Creates a Resource Dictionary
+        /// </summary>
+        /// <param name="filepath">Path to the Blender-exported file</param>
+        /// <param name="removeTransformations">True if all transformations shall be removed, false otherwise</param>
         public BlenderResourceDictionary(String filepath, bool removeTransformations)
         {
             string text = File.ReadAllText(filepath);         //read the text file
