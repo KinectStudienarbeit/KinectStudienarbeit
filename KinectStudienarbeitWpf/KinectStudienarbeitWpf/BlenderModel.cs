@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Media3D;
 
-namespace WPFTest
+namespace KinectStudienarbeitWpf
 {
     class BlenderModel
     {

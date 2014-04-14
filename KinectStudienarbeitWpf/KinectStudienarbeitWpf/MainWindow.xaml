@@ -1,5 +1,5 @@
-﻿<Window x:Class="WPFTest.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<Window x:Class="KinectStudienarbeitWpf.MainWindow"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="476" Width="939" Loaded="Window_Loaded" KeyDown="Window_KeyDown">
     <Grid>
@@ -22,7 +22,7 @@
                 </ModelVisual3D.Content>
             </ModelVisual3D>
         </Viewport3D>
-        
+
         <RadioButton x:Name="Radio_Translate" Content="Translate" HorizontalAlignment="Left" Margin="10,125,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="Radio_Rotate" Content="Rotate" HorizontalAlignment="Left" Margin="10,146,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="Textbox_File" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="Path to xaml" VerticalAlignment="Top" Width="120"/>

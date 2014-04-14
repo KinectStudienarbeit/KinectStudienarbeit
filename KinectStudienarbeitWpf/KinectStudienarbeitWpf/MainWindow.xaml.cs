@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,13 +12,9 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Markup;
-using Microsoft.Win32;
 
-namespace WPFTest
+namespace KinectStudienarbeitWpf
 {
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
@@ -37,7 +34,7 @@ namespace WPFTest
 
         }
 
-       
+
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {

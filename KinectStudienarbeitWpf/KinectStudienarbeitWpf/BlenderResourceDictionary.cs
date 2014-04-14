@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.IO;
 
-namespace WPFTest
+namespace KinectStudienarbeitWpf
 {
     class BlenderResourceDictionary
     {
