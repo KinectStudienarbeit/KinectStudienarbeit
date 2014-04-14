@@ -64,7 +64,6 @@
     </Compile>
     <Compile Include="BlenderModel.cs" />
     <Compile Include="BlenderResourceDictionary.cs" />
-    <Compile Include="KinectHandler.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>

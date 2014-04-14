@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Kinect;
 
 namespace KinectStudienarbeitWpf
 {
@@ -23,6 +24,8 @@ namespace KinectStudienarbeitWpf
     {
         BlenderResourceDictionary mainDictionary = null;
         BlenderModel mainModel = null;
+        KinectSensor mainKinect = null;
+        
 
         public MainWindow()
         {
@@ -31,7 +34,24 @@ namespace KinectStudienarbeitWpf
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            initializeKinect();
+        }
 
+        private void initializeKinect()
+        {
+            mainKinect = KinectSensor.KinectSensors.FirstOrDefault();
+            KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
+            Label_KinectStatus.Content = mainKinect.Status;
+
+        }
+
+        void KinectSensors_StatusChanged(object sender, StatusChangedEventArgs e)
+        {
+            if (e.Status == KinectStatus.Connected)
+            {
+                mainKinect = e.Sensor;
+            }
+            Label_KinectStatus.Content = e.Status;
         }
 
 
