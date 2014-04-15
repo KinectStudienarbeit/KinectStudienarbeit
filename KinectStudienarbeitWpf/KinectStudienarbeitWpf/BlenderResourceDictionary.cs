@@ -14,12 +14,13 @@ namespace KinectStudienarbeitWpf
     /// </summary>
     class BlenderResourceDictionary
     {
-        private const String regexPattern1 = "(<Model3DGroup>(.*?)</Model3DGroup>)|(<MaterialGroup(.*?)</MaterialGroup>)|(<Model3DGroup x:key=\"(.*?)\">(.*?)</Model3DGroup)";
-        private const String regexPattern2 = "<Model3DGroup>";
-        private const String regexPattern3 = "<Model3DGroup.Transform>(.*?)</Model3DGroup.Transform>";
-        private const String regexPattern4 = "<Model3DGroup>(\\s*?)</Model3DGroup>";
-        private const String resDictOpen = "<ResourceDictionary xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">";
-        private const String resDictClose = "</ResourceDictionary>";
+        private const String regexPattern_materialsAndModels = "(<Model3DGroup>(.*?)</Model3DGroup>)|(<MaterialGroup(.*?)</MaterialGroup>)|(<Model3DGroup x:key=\"(.*?)\">(.*?)</Model3DGroup)";
+        private const String regexPattern_modelWithoutKey = "<Model3DGroup>";
+        private const String regexPattern_modelTransformations = "<Model3DGroup.Transform>(.*?)</Model3DGroup.Transform>";
+        private const String regexPattern_emptyModels = "<Model3DGroup>(\\s*?)</Model3DGroup>";
+        private const String regexPattern_modelMaterial = " Material=\"(.*?)\"";
+        private const String tag_resDictOpen = "<ResourceDictionary xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">";
+        private const String tag_resDictClose = "</ResourceDictionary>";
 
         public ResourceDictionary resourceDictionary;
         public List<String> keyList;
@@ -40,7 +41,7 @@ namespace KinectStudienarbeitWpf
         public BlenderResourceDictionary(String filepath, bool removeTransformations)
         {
             string text = File.ReadAllText(filepath);         //read the text file
-            Regex r = new Regex(regexPattern1, RegexOptions.Singleline);     //prepare the regex for materials and objects
+            Regex r = new Regex(regexPattern_materialsAndModels, RegexOptions.Singleline);     //prepare the regex for materials and objects
             MatchCollection matches = r.Matches(text);      //apply the regex
             StringBuilder sb = new StringBuilder();
             foreach (Match m in matches)
@@ -51,14 +52,14 @@ namespace KinectStudienarbeitWpf
 
             if (removeTransformations)
             {
-                r = new Regex(regexPattern3, RegexOptions.Singleline);      //remove all translations, scaling and rotation
+                r = new Regex(regexPattern_modelTransformations, RegexOptions.Singleline);      //remove all translations, scaling and rotation
                 text = r.Replace(text, "");
             }
 
-            r = new Regex(regexPattern4, RegexOptions.Singleline);
-            text = r.Replace(text, "");
+            r = new Regex(regexPattern_emptyModels, RegexOptions.Singleline);
+            text = r.Replace(text, "");                                 //delete empty models (can appear in Blender exported xaml)
 
-            r = new Regex(regexPattern2, RegexOptions.Singleline);      //prepare regex for inserting key names
+            r = new Regex(regexPattern_modelWithoutKey, RegexOptions.Singleline);      //prepare regex for inserting key names
             Match match = r.Match(text);
             for (int i = 0; match.Success; i++)
             {
@@ -66,14 +67,16 @@ namespace KinectStudienarbeitWpf
                 match = r.Match(text);
             }
 
-            //if (removeTransformations)
-            //{
-            //    r = new Regex(regexPattern3, RegexOptions.Singleline);      //remove all translations, scaling and rotation
-            //    text = r.Replace(text, "");
-            //}
+            r = new Regex(regexPattern_modelMaterial, RegexOptions.Singleline);      //set BackMaterial of a model to its Material (fixes some problems with Blender exoprt to xaml)
+            matches = r.Matches(text);
+            for (int i = 0; i < matches.Count; i++)
+            {
+                text = text.Insert(matches[i].Index + matches[i].Length, " BackMaterial" + matches[i].Value.Substring(9));  //write the BackMaterial String after the Material
+                matches = r.Matches(text);          //update all matches to get updated indeces
+            }
 
-            text = text.Insert(0, resDictOpen);     //insert valid tags for a resource dictionary
-            text += resDictClose;                   //insert a closing tag for a resource dictionary
+            text = text.Insert(0, tag_resDictOpen);     //insert valid tags for a resource dictionary
+            text += tag_resDictClose;                   //insert a closing tag for a resource dictionary
 
             int tmpFileEnum = 0;
             String tmpFilePath;
