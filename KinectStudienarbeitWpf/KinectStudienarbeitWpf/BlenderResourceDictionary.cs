@@ -17,6 +17,7 @@ namespace KinectStudienarbeitWpf
         private const String regexPattern1 = "(<Model3DGroup>(.*?)</Model3DGroup>)|(<MaterialGroup(.*?)</MaterialGroup>)|(<Model3DGroup x:key=\"(.*?)\">(.*?)</Model3DGroup)";
         private const String regexPattern2 = "<Model3DGroup>";
         private const String regexPattern3 = "<Model3DGroup.Transform>(.*?)</Model3DGroup.Transform>";
+        private const String regexPattern4 = "<Model3DGroup>(\\s*?)</Model3DGroup>";
         private const String resDictOpen = "<ResourceDictionary xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">";
         private const String resDictClose = "</ResourceDictionary>";
 
@@ -48,6 +49,15 @@ namespace KinectStudienarbeitWpf
             }
             text = sb.ToString();
 
+            if (removeTransformations)
+            {
+                r = new Regex(regexPattern3, RegexOptions.Singleline);      //remove all translations, scaling and rotation
+                text = r.Replace(text, "");
+            }
+
+            r = new Regex(regexPattern4, RegexOptions.Singleline);
+            text = r.Replace(text, "");
+
             r = new Regex(regexPattern2, RegexOptions.Singleline);      //prepare regex for inserting key names
             Match match = r.Match(text);
             for (int i = 0; match.Success; i++)
@@ -56,11 +66,11 @@ namespace KinectStudienarbeitWpf
                 match = r.Match(text);
             }
 
-            if (removeTransformations)
-            {
-                r = new Regex(regexPattern3, RegexOptions.Singleline);      //remove all translations, scaling and rotation
-                text = r.Replace(text, "");
-            }
+            //if (removeTransformations)
+            //{
+            //    r = new Regex(regexPattern3, RegexOptions.Singleline);      //remove all translations, scaling and rotation
+            //    text = r.Replace(text, "");
+            //}
 
             text = text.Insert(0, resDictOpen);     //insert valid tags for a resource dictionary
             text += resDictClose;                   //insert a closing tag for a resource dictionary
