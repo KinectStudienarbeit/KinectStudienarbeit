@@ -35,6 +35,7 @@ namespace KinectStudienarbeitWpf
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             initializeKinect();
+
         }
 
         /// <summary>
@@ -63,6 +64,7 @@ namespace KinectStudienarbeitWpf
         }
 
 
+
         /// <summary>
         /// Deals with the keyboard input
         /// </summary>
@@ -70,7 +72,10 @@ namespace KinectStudienarbeitWpf
         /// <param name="e"></param>
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+
             if (mainModel == null) return;
+
+            Console.WriteLine(mainModel.getBounds().IntersectsWith(Quadrat.Bounds));
 
             if (Radio_Rotate.IsChecked.Value)
             {

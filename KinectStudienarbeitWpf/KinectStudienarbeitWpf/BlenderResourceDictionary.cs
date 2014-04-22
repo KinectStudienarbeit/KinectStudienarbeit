@@ -14,11 +14,13 @@ namespace KinectStudienarbeitWpf
     /// </summary>
     class BlenderResourceDictionary
     {
-        private const String regexPattern_materialsAndModels = "(<Model3DGroup>(.*?)</Model3DGroup>)|(<MaterialGroup(.*?)</MaterialGroup>)|(<Model3DGroup x:key=\"(.*?)\">(.*?)</Model3DGroup)";
+        private const String regexPattern_materialsAndModels = "(<Model3DGroup(.*?)</Model3DGroup>)|(<MaterialGroup(.*?)</MaterialGroup>)|(<Model3DGroup x:key=\"(.*?)\">(.*?)</Model3DGroup)";
         private const String regexPattern_modelWithoutKey = "<Model3DGroup>";
         private const String regexPattern_modelTransformations = "<Model3DGroup.Transform>(.*?)</Model3DGroup.Transform>";
         private const String regexPattern_emptyModels = "<Model3DGroup>(\\s*?)</Model3DGroup>";
         private const String regexPattern_modelMaterial = " Material=\"(.*?)\"";
+        private const String replaceNameWithKey_Name = "<Model3DGroup x:Name";
+        private const String replaceNameWithKey_Key = "<Model3DGroup x:Key";
         private const String tag_resDictOpen = "<ResourceDictionary xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">";
         private const String tag_resDictClose = "</ResourceDictionary>";
 
@@ -66,6 +68,8 @@ namespace KinectStudienarbeitWpf
                 text = text.Insert(match.Index + 13, " x:Key=\"Model" + i.ToString() + "\"");       //insert key name where needed
                 match = r.Match(text);
             }
+
+            text = text.Replace(replaceNameWithKey_Name, replaceNameWithKey_Key);
 
             r = new Regex(regexPattern_modelMaterial, RegexOptions.Singleline);      //set BackMaterial of a model to its Material (fixes some problems with Blender exoprt to xaml)
             matches = r.Matches(text);

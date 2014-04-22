@@ -15,10 +15,12 @@ namespace KinectStudienarbeitWpf
     class BlenderModel
     {
         private ModelVisual3D modelVisual3D;
+        private Model3DGroup model3DGroup;
         private Transform3DGroup transformations = new Transform3DGroup();
         private double offsetX = 0;
         private double offsetY = 0;
         private double offsetZ = 0;
+        public Rect3D bounds;
 
         /// <summary>
         /// Loads a model from a BlenderResourceDictionary
@@ -37,9 +39,10 @@ namespace KinectStudienarbeitWpf
         /// <param name="index">the name/key/index of the model to load</param>
         public BlenderModel(ResourceDictionary resourceDictionary, String index)
         {
-            Model3DGroup model3DGroup = resourceDictionary[index] as Model3DGroup;
+            model3DGroup = resourceDictionary[index] as Model3DGroup;
             modelVisual3D = new ModelVisual3D();
             modelVisual3D.Content = model3DGroup;
+            
         }
 
         /// <summary>
@@ -72,7 +75,7 @@ namespace KinectStudienarbeitWpf
             matrixTransform.Matrix = CalculateRotationMatrix(x, y, z);
             
             transformations.Children.Add(matrixTransform);
-            modelVisual3D.Transform = transformations;
+            model3DGroup.Transform = transformations;
         }
 
         /// <summary>
@@ -89,7 +92,7 @@ namespace KinectStudienarbeitWpf
             offsetY += matrixTransform.Matrix.OffsetY;
             offsetZ += matrixTransform.Matrix.OffsetZ;
             transformations.Children.Add(matrixTransform);
-            modelVisual3D.Transform = transformations;
+            model3DGroup.Transform = transformations;
         }
 
         private Matrix3D CalculateRotationMatrix(double x, double y, double z)      //taken from http://stackoverflow.com/questions/2042214/wpf-3d-rotate-a-model-around-its-own-axes
@@ -111,5 +114,11 @@ namespace KinectStudienarbeitWpf
 
             return matrix;
         }
+
+        public Rect3D getBounds()
+        {
+            return model3DGroup.Bounds;
+        }
+
     }
 }

@@ -7,20 +7,59 @@
 
             <Viewport3D.Camera>
                 <PerspectiveCamera
-                    Position="5,5,30"
-                    LookDirection="-5,-5,-30">
+                    Position="0,0,30"
+                    LookDirection="0,0,-30">
                 </PerspectiveCamera>
             </Viewport3D.Camera>
 
             <ModelVisual3D>
                 <ModelVisual3D.Content>
                     <DirectionalLight 
-                            Direction="-1, -0.5, 0"
+                            Direction="1, 1, -10"
                             Color="White">
 
                     </DirectionalLight>
                 </ModelVisual3D.Content>
             </ModelVisual3D>
+
+            <ModelVisual3D>
+                <ModelVisual3D.Content>
+                    <Model3DGroup>
+                        <GeometryModel3D x:Name="Quadrat">
+
+                            <GeometryModel3D.Transform>
+                                <TranslateTransform3D OffsetX="10" />
+                            </GeometryModel3D.Transform>
+                            
+                            <GeometryModel3D.Material>
+                                <DiffuseMaterial Brush="Blue"/>
+                            </GeometryModel3D.Material>
+
+                            <GeometryModel3D.Geometry>
+                                <MeshGeometry3D
+								 Positions="1.000000,1.000000,-1.000000 1.000000,-1.000000,-1.000000 -1.000000,-1.000000,-1.000000 -1.000000,1.000000,-1.000000 1.000000,0.999999,1.000000 -1.000000,1.000000,1.000000 -1.000000,-1.000000,1.000000 0.999999,-1.000001,1.000000 1.000000,1.000000,-1.000000 1.000000,0.999999,1.000000 0.999999,-1.000001,1.000000 1.000000,-1.000000,-1.000000 1.000000,-1.000000,-1.000000 0.999999,-1.000001,1.000000 -1.000000,-1.000000,1.000000 -1.000000,-1.000000,-1.000000 -1.000000,-1.000000,-1.000000 -1.000000,-1.000000,1.000000 -1.000000,1.000000,1.000000 -1.000000,1.000000,-1.000000 1.000000,0.999999,1.000000 1.000000,1.000000,-1.000000 -1.000000,1.000000,-1.000000 -1.000000,1.000000,1.000000"
+								 TriangleIndices="0,1,3 1,2,3 4,5,7 5,6,7 8,9,11 9,10,11 12,13,15 13,14,15 16,17,19 17,18,19 20,21,23 21,22,23"
+								 Normals="0.000000,0.000000,-1.000000 0.000000,0.000000,-1.000000 0.000000,0.000000,-1.000000 0.000000,0.000000,-1.000000 0.000000,-0.000000,1.000000 0.000000,-0.000000,1.000000 0.000000,-0.000000,1.000000 0.000000,-0.000000,1.000000 1.000000,-0.000000,0.000000 1.000000,-0.000000,0.000000 1.000000,-0.000000,0.000000 1.000000,-0.000000,0.000000 -0.000000,-1.000000,-0.000000 -0.000000,-1.000000,-0.000000 -0.000000,-1.000000,-0.000000 -0.000000,-1.000000,-0.000000 -1.000000,0.000000,-0.000000 -1.000000,0.000000,-0.000000 -1.000000,0.000000,-0.000000 -1.000000,0.000000,-0.000000 0.000000,1.000000,0.000000 0.000000,1.000000,0.000000 0.000000,1.000000,0.000000 0.000000,1.000000,0.000000"/>
+                            </GeometryModel3D.Geometry>
+
+                        </GeometryModel3D>
+                        <Model3DGroup.Transform>
+                            <Transform3DGroup>
+                                <Transform3DGroup.Children>
+                                    <ScaleTransform3D ScaleX="1.0" ScaleY="1.0" ScaleZ="1.0"/>
+                                    <RotateTransform3D>
+                                        <RotateTransform3D.Rotation>
+                                            <AxisAngleRotation3D  Axis="0.000000,-0.000000,0.000000" Angle="0.0"/>
+                                        </RotateTransform3D.Rotation>
+                                    </RotateTransform3D>
+                                    <TranslateTransform3D OffsetX="0.0" OffsetY="0.0" OffsetZ="0.0"/>
+                                </Transform3DGroup.Children>
+                            </Transform3DGroup>
+                        </Model3DGroup.Transform>
+                    </Model3DGroup>
+                </ModelVisual3D.Content>
+            </ModelVisual3D>
+
         </Viewport3D>
 
         <RadioButton x:Name="Radio_Translate" Content="Translate" HorizontalAlignment="Left" Margin="10,125,0,0" VerticalAlignment="Top" IsChecked="True"/>
