@@ -30,7 +30,7 @@
                             <GeometryModel3D.Transform>
                                 <TranslateTransform3D OffsetX="10" />
                             </GeometryModel3D.Transform>
-                            
+
                             <GeometryModel3D.Material>
                                 <DiffuseMaterial Brush="Blue"/>
                             </GeometryModel3D.Material>
@@ -71,5 +71,11 @@
         <RadioButton x:Name="Radio_Kinect" Content="Kinect" HorizontalAlignment="Left" Margin="10,167,0,0" VerticalAlignment="Top"/>
         <Label x:Name="Label_KinectStatusHeading" Content="Kinect Status:" HorizontalAlignment="Left" Margin="10,204,0,0" VerticalAlignment="Top"/>
         <Label x:Name="Label_KinectStatus" Content="disconnected" HorizontalAlignment="Left" Margin="10,230,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="Label_RightHandHeading" Content="Right Hand:" HorizontalAlignment="Left" Height="23" Margin="10,276,0,0" VerticalAlignment="Top" Width="75"/>
+        <Label x:Name="Label_RightHand" Content="X:   Y:" HorizontalAlignment="Left" Margin="10,299,0,0" VerticalAlignment="Top" Width="227"/>
+        <Label x:Name="Label_LeftHandHeading" Content="Left Hand:" HorizontalAlignment="Left" Height="23" Margin="10,366,0,0" VerticalAlignment="Top" Width="75"/>
+        <Label x:Name="Label_LeftHand" Content="X:   Y:" HorizontalAlignment="Left" Margin="10,389,0,0" VerticalAlignment="Top" Width="227"/>
+        <Label x:Name="Label_RightHandFingers" Content="X:Y  X:Y  X:Y  X:Y  X:Y" HorizontalAlignment="Left" Height="36" Margin="10,325,0,0" VerticalAlignment="Top" Width="227"/>
+        <Label x:Name="Label_LeftHandFingers" Content="X:Y  X:Y  X:Y  X:Y  X:Y" HorizontalAlignment="Left" Height="36" Margin="10,410,0,0" VerticalAlignment="Top" Width="227"/>
     </Grid>
 </Window>

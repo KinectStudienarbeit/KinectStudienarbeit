@@ -20,7 +20,6 @@ namespace KinectStudienarbeitWpf
         private double offsetX = 0;
         private double offsetY = 0;
         private double offsetZ = 0;
-        public Rect3D bounds;
 
         /// <summary>
         /// Loads a model from a BlenderResourceDictionary
@@ -73,9 +72,13 @@ namespace KinectStudienarbeitWpf
         {
             MatrixTransform3D matrixTransform = new MatrixTransform3D();
             matrixTransform.Matrix = CalculateRotationMatrix(x, y, z);
-            
             transformations.Children.Add(matrixTransform);
             model3DGroup.Transform = transformations;
+        }
+
+        public void translate(double x, double y, double z)
+        {
+            translate(x, y, z, true);
         }
 
         /// <summary>
@@ -84,8 +87,12 @@ namespace KinectStudienarbeitWpf
         /// <param name="x">Movement in x-direction</param>
         /// <param name="y">Movement in y-direction</param>
         /// <param name="z">Movement in z-direction</param>
-        public void translate(double x, double y, double z)
+        public void translate(double x, double y, double z, bool safe)
         {
+            if(safe && (x > 20 || y > 20 || z > 20))
+            {
+                return;
+            }
             MatrixTransform3D matrixTransform = new MatrixTransform3D();
             matrixTransform.Matrix = calculateTranslationMatrix(x, y, z);
             offsetX += matrixTransform.Matrix.OffsetX;
@@ -109,12 +116,15 @@ namespace KinectStudienarbeitWpf
         private Matrix3D calculateTranslationMatrix(double x, double y, double z)
         {
             Matrix3D matrix = new Matrix3D();
-
             matrix.Translate(new Vector3D(x, y, z));
 
             return matrix;
         }
 
+        /// <summary>
+        /// Returns the bounding box of the model
+        /// </summary>
+        /// <returns>The bounding box of the model</returns>
         public Rect3D getBounds()
         {
             return model3DGroup.Bounds;
