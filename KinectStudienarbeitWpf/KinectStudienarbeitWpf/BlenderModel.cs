@@ -20,6 +20,7 @@ namespace KinectStudienarbeitWpf
         private double offsetX = 0;
         private double offsetY = 0;
         private double offsetZ = 0;
+        private bool rightCoords = false;
 
         /// <summary>
         /// Loads a model from a BlenderResourceDictionary
@@ -70,9 +71,20 @@ namespace KinectStudienarbeitWpf
         /// <param name="z">Rotation around the z-axis in degrees</param>
         public void rotate(double x, double y, double z)
         {
+            Console.WriteLine(x + " " + y + " " + z);
             MatrixTransform3D matrixTransform = new MatrixTransform3D();
             matrixTransform.Matrix = CalculateRotationMatrix(x, y, z);
             transformations.Children.Add(matrixTransform);
+            model3DGroup.Transform = transformations;
+        }
+
+        public void scale(double x, double y, double z)
+        {
+            ScaleTransform3D scaleTransform = new ScaleTransform3D();
+            scaleTransform.ScaleX = x;
+            scaleTransform.ScaleY = y;
+            scaleTransform.ScaleZ = z;
+            transformations.Children.Add(scaleTransform);
             model3DGroup.Transform = transformations;
         }
 
@@ -95,11 +107,30 @@ namespace KinectStudienarbeitWpf
             }
             MatrixTransform3D matrixTransform = new MatrixTransform3D();
             matrixTransform.Matrix = calculateTranslationMatrix(x, y, z);
-            offsetX += matrixTransform.Matrix.OffsetX;
-            offsetY += matrixTransform.Matrix.OffsetY;
-            offsetZ += matrixTransform.Matrix.OffsetZ;
-            transformations.Children.Add(matrixTransform);
-            model3DGroup.Transform = transformations;
+            double xtmp = offsetX + matrixTransform.Matrix.OffsetX;
+            double ytmp = offsetY + matrixTransform.Matrix.OffsetY;
+            double ztmp = offsetZ + matrixTransform.Matrix.OffsetZ;
+            if (!safe || (offsetX + matrixTransform.Matrix.OffsetX < Room.BOARDER_X_P && offsetX + matrixTransform.Matrix.OffsetX > Room.BOARDER_X_N && offsetY + matrixTransform.Matrix.OffsetY < Room.BOARDER_Y_P && offsetY + matrixTransform.Matrix.OffsetY > Room.BOARDER_Y_N && offsetZ + matrixTransform.Matrix.OffsetZ < Room.BOARDER_Z_P && offsetZ + matrixTransform.Matrix.OffsetZ > Room.BOARDER_Z_N))
+            {
+
+                if (xtmp > Room.LOCH_X_L&& xtmp < Room.LOCH_X_R&& ytmp > Room.LOCH_Y_U&& ytmp < Room.LOCH_Y_O)
+                {
+                    rightCoords = true;
+                }
+                else rightCoords = false;
+
+                if (rightCoords || ztmp > Room.WALL_Z ||!safe)
+                {
+                    offsetX += matrixTransform.Matrix.OffsetX;
+                    offsetY += matrixTransform.Matrix.OffsetY;
+                    offsetZ += matrixTransform.Matrix.OffsetZ;
+
+
+                    transformations.Children.Add(matrixTransform);
+                    model3DGroup.Transform = transformations;
+                }
+            }
+            Console.WriteLine(x + " " + y + " " + z);
         }
 
         private Matrix3D CalculateRotationMatrix(double x, double y, double z)      //taken from http://stackoverflow.com/questions/2042214/wpf-3d-rotate-a-model-around-its-own-axes

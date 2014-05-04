@@ -43,6 +43,26 @@ namespace KinectStudienarbeitWpf
         {
             initializeKinect();
 
+            mainDictionary = new BlenderResourceDictionary(@"C:\Users\rusinda\Documents\Visual Studio 2012\Projects\KinectStudienarbeitWpf\KinectStudienarbeitWpf\Spielraumblend4.xaml");
+            //BlenderModel raum = new BlenderModel(mainDictionary, "Raum");
+            //raum.addToViewport(this.mainViewPort);
+            BlenderModel wand = new BlenderModel(mainDictionary, "Wand");
+            wand.addToViewport(this.mainViewPort);
+            mainModel = new BlenderModel(mainDictionary, "Quader");
+            mainModel.addToViewport(this.mainViewPort);
+
+            //raum.rotate(-90, 0, 0);
+            //raum.rotate(0, -90, 0);
+
+            //raum.translate(0, -0.5, 25, false);
+
+            wand.rotate(0, -90, 0);
+            wand.rotate(0, 0, -90);
+            wand.translate(0, 0, -15, false);
+            wand.translate(5, 0, 0, false);
+            wand.scale(1.2, 1.2, 1);
+
+            //mainModel.translate(Room.LOCH_X, Room.LOCH_Y, Room.WALL_Z, false);
         }
 
         /// <summary>
@@ -56,12 +76,16 @@ namespace KinectStudienarbeitWpf
 
             //var parameters = new TransformSmoothParameters
             //{
-            //    Smoothing = 0.3f,
-            //    Correction = 0.0f,
+            //    Smoothing = 0.5f,
+            //    Correction = 0.5f,
             //    Prediction = 0.0f,
-            //    JitterRadius = 1.0f,
+            //    JitterRadius = 2.0f,
             //    MaxDeviationRadius = 0.5f
             //};
+
+            //mainKinect.SkeletonStream.TrackingMode = SkeletonTrackingMode.Seated;
+
+            mainKinect.ColorStream.Enable();
 
             mainKinect.SkeletonStream.Enable();
             mainSkeletonData = new Skeleton[mainKinect.SkeletonStream.FrameSkeletonArrayLength];
@@ -116,7 +140,7 @@ namespace KinectStudienarbeitWpf
             }
             if (Radio_Kinect.IsChecked.Value)
             {
-                mainModel.translate((pointRight.X - oldx) / 5, (oldy - pointRight.Y) / 5, (pointRight.Depth - oldz) / 5);// Math.Abs(oldy - pointRight.Y), Math.Abs(oldz - pointRight.Depth));
+                mainModel.translate((pointRight.X - oldx )/ 20d, (oldy - pointRight.Y) /20d, (pointRight.Depth - oldz) / 20d);// Math.Abs(oldy - pointRight.Y), Math.Abs(oldz - pointRight.Depth));
             }
             oldx = pointRight.X;
             oldy = pointRight.Y;
@@ -124,8 +148,60 @@ namespace KinectStudienarbeitWpf
             //getFingers(pointRight, e);
             DepthImagePoint pointLeft = mapper.MapSkeletonPointToDepthPoint(first.Joints[JointType.HandLeft].Position, DepthImageFormat.Resolution640x480Fps30);
             Label_LeftHand.Content = "X: " + pointLeft.X + "   Y: " + pointLeft.Y + "   Z:" + pointRight.Depth;
+
+            using (ColorImageFrame frame = e.OpenColorImageFrame())
+            {
+                if (frame == null)  //do nothing if a frame is dropped
+                    return;
+
+                //the image will be stored in a byte array
+                byte[] pixels = new byte[frame.PixelDataLength];
+                //copy the kinect image into the byte array
+                frame.CopyPixelDataTo(pixels);
+
+                int stride = frame.Width * 4; //because of R G B + blank
+
+                ImageColorStream.Source = BitmapSource.Create(frame.Width, frame.Height, 96, 96, PixelFormats.Bgr32, null, pixels, stride);
+            }
+
+            //drawSkeleton(first);
+
             
         }
+
+        void drawSkeleton(Skeleton skeleton)
+        {
+            List<Line> lines = new List<Line>();
+            lines.Add(new Line());
+            lines[lines.Count - 1].X1 = skeleton.Joints[JointType.HandRight].Position.X;
+            lines[lines.Count - 1].Y1 = skeleton.Joints[JointType.HandRight].Position.Y;
+            lines[lines.Count - 1].X2 = skeleton.Joints[JointType.ElbowRight].Position.X;
+            lines[lines.Count - 1].Y2 = skeleton.Joints[JointType.ElbowRight].Position.Y;
+
+            lines.Add(new Line());
+            lines[lines.Count - 1].X1 = skeleton.Joints[JointType.ShoulderRight].Position.X;
+            lines[lines.Count - 1].Y1 = skeleton.Joints[JointType.ShoulderRight].Position.Y;
+            lines[lines.Count - 1].X2 = skeleton.Joints[JointType.ElbowRight].Position.X;
+            lines[lines.Count - 1].Y2 = skeleton.Joints[JointType.ElbowRight].Position.Y;
+
+            lines.Add(new Line());
+            lines[lines.Count - 1].X1 = skeleton.Joints[JointType.ShoulderRight].Position.X;
+            lines[lines.Count - 1].Y1 = skeleton.Joints[JointType.ShoulderRight].Position.Y;
+            lines[lines.Count - 1].X2 = skeleton.Joints[JointType.ShoulderCenter].Position.X;
+            lines[lines.Count - 1].Y2 = skeleton.Joints[JointType.ShoulderCenter].Position.Y;
+
+            lines.Add(new Line());
+            lines[lines.Count - 1].X1 = skeleton.Joints[JointType.Head].Position.X;
+            lines[lines.Count - 1].Y1 = skeleton.Joints[JointType.Head].Position.Y;
+            lines[lines.Count - 1].X2 = skeleton.Joints[JointType.ShoulderCenter].Position.X;
+            lines[lines.Count - 1].Y2 = skeleton.Joints[JointType.ShoulderCenter].Position.Y;
+
+            foreach (Line line in lines)
+            {
+                grid.Children.Add(line);
+            }
+        }
+
 
         DepthImagePoint[] getFingers(DepthImagePoint handPosition, AllFramesReadyEventArgs e)
         {
@@ -239,27 +315,27 @@ namespace KinectStudienarbeitWpf
                 switch (e.Key)
                 {
                     case Key.W:
-                        mainModel.translate(0, 0.5, 0);
+                        mainModel.translate(0, 0.1, 0);
                         break;
 
                     case Key.S:
-                        mainModel.translate(0, -0.5, 0);
+                        mainModel.translate(0, -0.1, 0);
                         break;
 
                     case Key.D:
-                        mainModel.translate(0.5, 0, 0);
+                        mainModel.translate(0.1, 0, 0);
                         break;
 
                     case Key.A:
-                        mainModel.translate(-0.5, 0, 0);
+                        mainModel.translate(-0.1, 0, 0);
                         break;
 
                     case Key.E:
-                        mainModel.translate(0, 0, -0.5);
+                        mainModel.translate(0, 0, -0.1);
                         break;
 
                     case Key.Q:
-                        mainModel.translate(0, 0, 0.5);
+                        mainModel.translate(0, 0, 0.1);
                         break;
                 }
             }
@@ -301,6 +377,11 @@ namespace KinectStudienarbeitWpf
 
             mainModel = new BlenderModel(mainDictionary, ComboBox_Models.SelectedItem as String);
             mainModel.addToViewport(this.mainViewPort);
+        }
+
+        private void Radio_Kinect_Checked(object sender, RoutedEventArgs e)
+        {
+            System.Threading.Thread.Sleep(1000);
         }
 
     }
