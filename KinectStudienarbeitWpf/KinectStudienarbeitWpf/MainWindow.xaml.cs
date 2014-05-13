@@ -14,6 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Kinect;
+using System.Timers;
+using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace KinectStudienarbeitWpf
 {
@@ -25,22 +28,27 @@ namespace KinectStudienarbeitWpf
         BlenderResourceDictionary mainDictionary = null;
         BlenderModel mainModel = null;
         KinectSensor mainKinect = null;
-        Skeleton[] mainSkeletonData;
+        //Skeleton[] mainSkeletonData;
         int oldx = -1;
         int oldy = -1;
         int oldz = -1;
-
-        const int RANGE_FINGERS_X = 100;
-        const int RANGE_FINGERS_Y = 100;
-        
+        double oldAngle = -1;
+        bool goKinect = true;
+        DispatcherTimer time = null;
+        int secs = 0;
+        const int HANDS_DISTANCE = 150;
 
         public MainWindow()
         {
             InitializeComponent();
+            Label_Start.Visibility = System.Windows.Visibility.Hidden;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            this.Left = 5;
+            this.Top = 5;
+
             initializeKinect();
 
             mainDictionary = new BlenderResourceDictionary(@"C:\Users\rusinda\Documents\Visual Studio 2012\Projects\KinectStudienarbeitWpf\KinectStudienarbeitWpf\Spielraumblend4.xaml");
@@ -56,12 +64,12 @@ namespace KinectStudienarbeitWpf
 
             //raum.translate(0, -0.5, 25, false);
 
-            wand.rotate(0, -90, 0);
-            wand.rotate(0, 0, -90);
-            wand.translate(0, 0, -15, false);
-            wand.translate(5, 0, 0, false);
+            wand.rotate(0, -90, 0, false);
+            wand.rotate(0, 0, -90, false);
+            wand.translate(5, 0, -10, false);
             wand.scale(1.2, 1.2, 1);
 
+            //mainModel.translateAbsolute(100, 80, 0);
             //mainModel.translate(Room.LOCH_X, Room.LOCH_Y, Room.WALL_Z, false);
         }
 
@@ -70,85 +78,39 @@ namespace KinectStudienarbeitWpf
         /// </summary>
         private void initializeKinect()
         {
-            mainKinect = KinectSensor.KinectSensors.FirstOrDefault();
-            KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
-            Label_KinectStatus.Content = mainKinect.Status;
-
-            //var parameters = new TransformSmoothParameters
-            //{
-            //    Smoothing = 0.5f,
-            //    Correction = 0.5f,
-            //    Prediction = 0.0f,
-            //    JitterRadius = 2.0f,
-            //    MaxDeviationRadius = 0.5f
-            //};
-
-            //mainKinect.SkeletonStream.TrackingMode = SkeletonTrackingMode.Seated;
-
-            mainKinect.ColorStream.Enable();
-
-            mainKinect.SkeletonStream.Enable();
-            mainSkeletonData = new Skeleton[mainKinect.SkeletonStream.FrameSkeletonArrayLength];
-
-            mainKinect.DepthStream.Enable();
-            mainKinect.AllFramesReady += mainKinect_AllFramesReady;
-            mainKinect.Start();
-        }
-
-        Skeleton GetFirstSkeleton(AllFramesReadyEventArgs e)
-        {
-            using (SkeletonFrame skeletonFrameData = e.OpenSkeletonFrame())
+            try
             {
-                if (skeletonFrameData == null)
-                {
-                    return null;
-                }
+                mainKinect = KinectSensor.KinectSensors.FirstOrDefault();
+                KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
+                Label_KinectStatus.Content = mainKinect.Status;
 
 
-                skeletonFrameData.CopySkeletonDataTo(mainSkeletonData);
+                //mainKinect.SkeletonStream.TrackingMode = SkeletonTrackingMode.Seated;
 
-                //get the first tracked skeleton
-                Skeleton first = (from s in mainSkeletonData
-                                  where s.TrackingState == SkeletonTrackingState.Tracked
-                                  select s).FirstOrDefault();
+                mainKinect.ColorStream.Enable();
 
-                return first;
+                mainKinect.SkeletonStream.Enable();
+                
+
+                mainKinect.DepthStream.Enable();
+                mainKinect.AllFramesReady += mainKinect_AllFramesReady;
+                mainKinect.ColorFrameReady += mainKinect_ColorFrameReady;
+                mainKinect.Start();
+            }
+            catch (Exception)
+            {
+
 
             }
         }
 
-        void mainKinect_AllFramesReady(object sender, AllFramesReadyEventArgs e)
+        /// <summary>
+        /// Gets called if a RGB frame is ready
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void mainKinect_ColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
         {
-            Skeleton first = GetFirstSkeleton(e);
-            if (first == null) return;
-
-            CoordinateMapper mapper = new CoordinateMapper(mainKinect);
-
-            DepthImagePoint pointRight = mapper.MapSkeletonPointToDepthPoint(first.Joints[JointType.HandRight].Position, DepthImageFormat.Resolution640x480Fps30);
-            Label_RightHand.Content = "X: " + pointRight.X + "   Y: " + pointRight.Y + "   Z:" + pointRight.Depth;
-            if (oldx == -1)
-            {
-                oldx = pointRight.X;
-            }
-            if (oldy == -1)
-            {
-                oldy = pointRight.Y;
-            }
-            if (oldz == -1)
-            {
-                oldz = pointRight.Depth;
-            }
-            if (Radio_Kinect.IsChecked.Value)
-            {
-                mainModel.translate((pointRight.X - oldx )/ 20d, (oldy - pointRight.Y) /20d, (pointRight.Depth - oldz) / 20d);// Math.Abs(oldy - pointRight.Y), Math.Abs(oldz - pointRight.Depth));
-            }
-            oldx = pointRight.X;
-            oldy = pointRight.Y;
-            oldz = pointRight.Depth;
-            //getFingers(pointRight, e);
-            DepthImagePoint pointLeft = mapper.MapSkeletonPointToDepthPoint(first.Joints[JointType.HandLeft].Position, DepthImageFormat.Resolution640x480Fps30);
-            Label_LeftHand.Content = "X: " + pointLeft.X + "   Y: " + pointLeft.Y + "   Z:" + pointRight.Depth;
-
             using (ColorImageFrame frame = e.OpenColorImageFrame())
             {
                 if (frame == null)  //do nothing if a frame is dropped
@@ -164,92 +126,185 @@ namespace KinectStudienarbeitWpf
                 ImageColorStream.Source = BitmapSource.Create(frame.Width, frame.Height, 96, 96, PixelFormats.Bgr32, null, pixels, stride);
             }
 
-            //drawSkeleton(first);
+            if (!goKinect)
+            {
+                if (!time.IsEnabled)
+                {
+                    secs = 0;
+                    time.IsEnabled = true;
+                    time.Start();
+                }
+                else
+                {
+                    if (secs >= 3)
+                    {
+                        time.Stop();
+                        Process.Start(Application.ResourceAssembly.Location);
+                        Application.Current.Shutdown();
+                    }
+                }
+            }
+        }
 
+        /// <summary>
+        /// Returns the first skeleton (the kinect recognizes up to two)
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        Skeleton getFirstSkeleton(AllFramesReadyEventArgs e)
+        {
+            using (SkeletonFrame skeletonFrameData = e.OpenSkeletonFrame())
+            {
+                if (skeletonFrameData == null)
+                {
+                    return null;
+                }
+
+                Skeleton[] mainSkeletonData = new Skeleton[mainKinect.SkeletonStream.FrameSkeletonArrayLength];
+
+                skeletonFrameData.CopySkeletonDataTo(mainSkeletonData);
+
+                //get the first tracked skeleton
+                Skeleton first = (from s in mainSkeletonData
+                                  where s.TrackingState == SkeletonTrackingState.Tracked
+                                  select s).FirstOrDefault();
+
+                return first;
+
+            }
+        }
+
+        /// <summary>
+        /// The tick event for the timer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void time_Tick(object sender, EventArgs e)
+        {
+            secs++;
+        }
+
+        /// <summary>
+        /// Gets called if the RGB, depth and skeleton frame is ready
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void mainKinect_AllFramesReady(object sender, AllFramesReadyEventArgs e)
+        {
+
+            if (!Radio_Kinect.IsChecked.Value) return;      //return if Kinect is not selected as input
+            if (!goKinect) return;                          //return if game is over (temporary)
+
+            Skeleton mainSkeleton = getFirstSkeleton(e);    //get the first skeleton
+            if (mainSkeleton == null) return;               //return if the Kinect does not recognize any skeletons
+            if (time == null)                               //start the timer if not startet
+            {
+                time = new DispatcherTimer();
+                time.Interval = new TimeSpan(0, 0, 1);      //intervall of a second
+                time.Tick += time_Tick;
+                time.Start();
+            }
+
+
+            if (mainModel.getCoords().Z < Room.WALL_Z - 4)  //the model is behind the wall -> player has won
+            {
+                time.Stop();
+                time.IsEnabled = false;
+                Label_Start.Content = "You won! - Time: " + secs.ToString() + "s";
+                Label_Start.Visibility = System.Windows.Visibility.Visible;
+
+                goKinect = false;
+                return;
+            }
+
+            CoordinateMapper mapper = new CoordinateMapper(mainKinect);     //mapper between skeleton and depth image
+
+            DepthImagePoint pointRight = mapper.MapSkeletonPointToDepthPoint(mainSkeleton.Joints[JointType.HandRight].Position, DepthImageFormat.Resolution640x480Fps30); //get the right hand
+
+            Canvas.SetLeft(Ellipse_RightHand, pointRight.X * ImageColorStream.Width / 640);     //set the position of the right hand marker
+            Canvas.SetTop(Ellipse_RightHand, pointRight.Y * ImageColorStream.Height / 480);
+
+            if (pointRight.Depth > Room.kinectZmax)     //adapt the Z-Range if the player goes out of it
+            {
+                Room.kinectZmax = pointRight.Depth;
+                Room.kinectZmin = pointRight.Depth - 500;
+            }
+            if (pointRight.Depth < Room.kinectZmin)
+            {
+                Room.kinectZmax = pointRight.Depth + 500;
+                Room.kinectZmin = pointRight.Depth;
+            }
+
+            DepthImagePoint pointLeft = mapper.MapSkeletonPointToDepthPoint(mainSkeleton.Joints[JointType.HandLeft].Position, DepthImageFormat.Resolution640x480Fps30); //get the left hand
             
-        }
+            Canvas.SetLeft(Ellipse_LeftHand, pointLeft.X * ImageColorStream.Width / 640);   //set the position of the left hand marker
+            Canvas.SetTop(Ellipse_LeftHand, pointLeft.Y * ImageColorStream.Height / 480);
 
-        void drawSkeleton(Skeleton skeleton)
-        {
-            List<Line> lines = new List<Line>();
-            lines.Add(new Line());
-            lines[lines.Count - 1].X1 = skeleton.Joints[JointType.HandRight].Position.X;
-            lines[lines.Count - 1].Y1 = skeleton.Joints[JointType.HandRight].Position.Y;
-            lines[lines.Count - 1].X2 = skeleton.Joints[JointType.ElbowRight].Position.X;
-            lines[lines.Count - 1].Y2 = skeleton.Joints[JointType.ElbowRight].Position.Y;
-
-            lines.Add(new Line());
-            lines[lines.Count - 1].X1 = skeleton.Joints[JointType.ShoulderRight].Position.X;
-            lines[lines.Count - 1].Y1 = skeleton.Joints[JointType.ShoulderRight].Position.Y;
-            lines[lines.Count - 1].X2 = skeleton.Joints[JointType.ElbowRight].Position.X;
-            lines[lines.Count - 1].Y2 = skeleton.Joints[JointType.ElbowRight].Position.Y;
-
-            lines.Add(new Line());
-            lines[lines.Count - 1].X1 = skeleton.Joints[JointType.ShoulderRight].Position.X;
-            lines[lines.Count - 1].Y1 = skeleton.Joints[JointType.ShoulderRight].Position.Y;
-            lines[lines.Count - 1].X2 = skeleton.Joints[JointType.ShoulderCenter].Position.X;
-            lines[lines.Count - 1].Y2 = skeleton.Joints[JointType.ShoulderCenter].Position.Y;
-
-            lines.Add(new Line());
-            lines[lines.Count - 1].X1 = skeleton.Joints[JointType.Head].Position.X;
-            lines[lines.Count - 1].Y1 = skeleton.Joints[JointType.Head].Position.Y;
-            lines[lines.Count - 1].X2 = skeleton.Joints[JointType.ShoulderCenter].Position.X;
-            lines[lines.Count - 1].Y2 = skeleton.Joints[JointType.ShoulderCenter].Position.Y;
-
-            foreach (Line line in lines)
+            int dx = pointLeft.X - pointRight.X;        //needed for distance calculation
+            int dy = pointLeft.Y - pointRight.Y;
+            if (dx * dx + dy * dy < HANDS_DISTANCE * HANDS_DISTANCE)    //if the distance is small enough
             {
-                grid.Children.Add(line);
-            }
-        }
+                Ellipse_LeftHand.Fill = new SolidColorBrush(Colors.Red);    //paint the hand markers red...
+                Ellipse_RightHand.Fill = new SolidColorBrush(Colors.Red);
 
-
-        DepthImagePoint[] getFingers(DepthImagePoint handPosition, AllFramesReadyEventArgs e)
-        {
-            DepthImageFrame depthImageFrame = e.OpenDepthImageFrame();
-            DepthImagePixel[] depthPixelData = new DepthImagePixel[depthImageFrame.PixelDataLength];
-            depthImageFrame.CopyDepthImagePixelDataTo(depthPixelData);
-
-            int startx = handPosition.X - RANGE_FINGERS_X;
-            int starty = handPosition.Y - RANGE_FINGERS_Y;
-
-            if (startx < 0 || startx >= depthImageFrame.Width - RANGE_FINGERS_X * 2 || starty < 0 || starty >= depthImageFrame.Height - RANGE_FINGERS_Y * 2)
-            {
-                depthImageFrame.Dispose();
-                return null;
-            }
-
-            int[,] depths = new int[200, 200];
-            for (int y = 0; y < 200; y++)
-            {
-                for (int x = 0; x < 200; x++)
+                if (oldAngle == -1)
                 {
-                    int value = 0;
-
-
-                    value = depthPixelData[(starty + y) * depthImageFrame.Width + startx + x].Depth;
-
-
-                    if (value <= handPosition.Depth) value = 0;
-                    depths[x, y] = value;
+                    oldAngle = getAngle(pointRight.X, pointRight.Y, pointLeft.X, pointLeft.Y);
                 }
-            }
-            int count = 0;
+                mainModel.rotate(0, 0, getAngle(pointRight.X, pointRight.Y, pointLeft.X, pointLeft.Y) - oldAngle);  //and use rotation
+                oldAngle = getAngle(pointRight.X, pointRight.Y, pointLeft.X, pointLeft.Y);
 
-            for (int i = 0; i < 200; i++)
+            }
+            else
             {
-                for (int j = 0; j < 200; j++)
-                {
-                    if (depths[i, j] > 0) count++;
-                }
+
+                Ellipse_LeftHand.Fill = new SolidColorBrush(Colors.Blue);
+                Ellipse_RightHand.Fill = new SolidColorBrush(Colors.Green);
+
             }
-            Label_RightHandFingers.Content = count.ToString();
-            depthImageFrame.Dispose();
-            return null;
+
+
+            if (Radio_Absolute.IsChecked.Value == true)
+            {
+                mainModel.translateAbsolute(pointRight.X, pointRight.Y, pointRight.Depth);  //absolute movement
+            }
+            else
+            {
+                if (oldx == -1)             //relative movement
+                {
+                    oldx = pointRight.X;
+                }
+                if (oldy == -1)
+                {
+                    oldy = pointRight.Y;
+                }
+                if (oldz == -1)
+                {
+                    oldz = pointRight.Depth;
+                }
+                mainModel.translate((pointRight.X - oldx) * Room.FACTOR_X, 0, 0);
+                mainModel.translate(0, (oldy - pointRight.Y) * Room.FACTOR_Y, 0);
+                mainModel.translate(0, 0, (pointRight.Depth - oldz) * Room.FACTOR_Z);
+                oldx = pointRight.X;
+                oldy = pointRight.Y;
+                oldz = pointRight.Depth;
+            }
         }
 
-        DepthImagePixel getDepthImagePixel(DepthImagePixel[] depthImagePixels, int x, int y, int width)
+        /// <summary>
+        /// Returns the angle of two points
+        /// </summary>
+        /// <param name="x1">X coordinate of the first point</param>
+        /// <param name="y1">Y coordinate of the first point</param>
+        /// <param name="x2">X coordinate of the second point</param>
+        /// <param name="y2">Y coordinate of the second point</param>
+        /// <returns>The angle between the two points</returns>
+        double getAngle(int x1, int y1, int x2, int y2)
         {
-            return depthImagePixels[y * width + x];
+            double returnVal = Math.Atan2(x1 - x2, y1 - y2) * (180D / Math.PI);
+            if (returnVal < 0) returnVal += 360;
+
+            return returnVal;
         }
 
         /// <summary>
@@ -267,8 +322,6 @@ namespace KinectStudienarbeitWpf
             Label_KinectStatus.Content = e.Status;
         }
 
-
-
         /// <summary>
         /// Deals with the keyboard input
         /// </summary>
@@ -278,8 +331,6 @@ namespace KinectStudienarbeitWpf
         {
 
             if (mainModel == null) return;
-
-            Console.WriteLine(mainModel.getBounds().IntersectsWith(Quadrat.Bounds));
 
             if (Radio_Rotate.IsChecked.Value)
             {
@@ -341,6 +392,11 @@ namespace KinectStudienarbeitWpf
             }
         }
 
+        /// <summary>
+        /// Logic of the test GUI...
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Browse_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -349,6 +405,11 @@ namespace KinectStudienarbeitWpf
             Textbox_File.Text = openFileDialog.FileName;
         }
 
+        /// <summary>
+        /// Logic of the test GUI...
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Load_Click(object sender, RoutedEventArgs e)
         {
             if (!File.Exists(Textbox_File.Text))
@@ -358,6 +419,7 @@ namespace KinectStudienarbeitWpf
             else
             {
                 mainDictionary = new BlenderResourceDictionary(Textbox_File.Text);
+                ComboBox_Models.Items.Clear();
                 foreach (String s in mainDictionary.keyList)
                 {
                     ComboBox_Models.Items.Add(s);
@@ -368,6 +430,11 @@ namespace KinectStudienarbeitWpf
 
         }
 
+        /// <summary>
+        /// Logic of the test GUI...
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ComboBox_Models_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (mainModel != null)
@@ -379,9 +446,14 @@ namespace KinectStudienarbeitWpf
             mainModel.addToViewport(this.mainViewPort);
         }
 
+        /// <summary>
+        /// Logic of the test GUI...
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Radio_Kinect_Checked(object sender, RoutedEventArgs e)
         {
-            System.Threading.Thread.Sleep(1000);
+            //probably to be removed
         }
 
     }
