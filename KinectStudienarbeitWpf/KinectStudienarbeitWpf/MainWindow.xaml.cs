@@ -50,27 +50,28 @@ namespace KinectStudienarbeitWpf
             this.Top = 5;
 
             initializeKinect();
+            Console.WriteLine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName);
+            mainDictionary = new BlenderResourceDictionary(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Spielraumblend4.xaml");
 
-            mainDictionary = new BlenderResourceDictionary(@"C:\Users\rusinda\Documents\Visual Studio 2012\Projects\KinectStudienarbeitWpf\KinectStudienarbeitWpf\Spielraumblend4.xaml");
-            //BlenderModel raum = new BlenderModel(mainDictionary, "Raum");
-            //raum.addToViewport(this.mainViewPort);
             BlenderModel wand = new BlenderModel(mainDictionary, "Wand");
             wand.addToViewport(this.mainViewPort);
             mainModel = new BlenderModel(mainDictionary, "Quader");
             mainModel.addToViewport(this.mainViewPort);
 
-            //raum.rotate(-90, 0, 0);
-            //raum.rotate(0, -90, 0);
-
-            //raum.translate(0, -0.5, 25, false);
+            //BlenderModel raum = new BlenderModel(mainDictionary, "Raum");
+            //raum.addToViewport(this.mainViewPort);
+            //raum.rotate(-90, 0, 0, false);
+            //raum.rotate(0, -90, 0, false);
+            //raum.translate(0, -0.5, -8, false);
+            //raum.scale(0.05,0.52, 0);
+            //raum.translate(0, 0, 11, false);
+            //mainModel = raum;
 
             wand.rotate(0, -90, 0, false);
             wand.rotate(0, 0, -90, false);
             wand.translate(5, 0, -10, false);
-            wand.scale(1.2, 1.2, 1);
+            wand.scale(0.2, 0.2, 0);
 
-            //mainModel.translateAbsolute(100, 80, 0);
-            //mainModel.translate(Room.LOCH_X, Room.LOCH_Y, Room.WALL_Z, false);
         }
 
         /// <summary>
@@ -329,6 +330,15 @@ namespace KinectStudienarbeitWpf
         /// <param name="e"></param>
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            switch (e.Key)
+            {
+                case Key.Y:
+                    mainModel.scale(0, 0, 0.5);
+                    break;
+                case Key.X:
+                    mainModel.scale(0, 0, -0.5);
+                    break;
+            }
 
             if (mainModel == null) return;
 
@@ -366,27 +376,27 @@ namespace KinectStudienarbeitWpf
                 switch (e.Key)
                 {
                     case Key.W:
-                        mainModel.translate(0, 0.1, 0);
+                        mainModel.translate(0, 0.1, 0, false);
                         break;
 
                     case Key.S:
-                        mainModel.translate(0, -0.1, 0);
+                        mainModel.translate(0, -0.1, 0, false);
                         break;
 
                     case Key.D:
-                        mainModel.translate(0.1, 0, 0);
+                        mainModel.translate(0.1, 0, 0, false);
                         break;
 
                     case Key.A:
-                        mainModel.translate(-0.1, 0, 0);
+                        mainModel.translate(-0.1, 0, 0, false);
                         break;
 
                     case Key.E:
-                        mainModel.translate(0, 0, -0.1);
+                        mainModel.translate(0, 0, -0.1, false);
                         break;
 
                     case Key.Q:
-                        mainModel.translate(0, 0, 0.1);
+                        mainModel.translate(0, 0, 0.1, false);
                         break;
                 }
             }

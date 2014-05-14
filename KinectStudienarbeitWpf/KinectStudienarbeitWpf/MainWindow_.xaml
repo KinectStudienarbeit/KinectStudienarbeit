@@ -1,9 +1,0 @@
-﻿<Window x:Class="KinectStudienarbeitWpf.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="377.827">
-    <Grid>
-        <Image x:Name="ImageColorStream" HorizontalAlignment="Left" Height="240" Margin="10,10,0,0" VerticalAlignment="Top" Width="320"/>
-
-    </Grid>
-</Window>

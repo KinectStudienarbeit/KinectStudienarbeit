@@ -111,9 +111,9 @@ namespace KinectStudienarbeitWpf
         public void scale(double x, double y, double z)
         {
             ScaleTransform3D scaleTransform = new ScaleTransform3D();
-            scaleTransform.ScaleX = x;
-            scaleTransform.ScaleY = y;
-            scaleTransform.ScaleZ = z;
+            scaleTransform.ScaleX += x;
+            scaleTransform.ScaleY += y;
+            scaleTransform.ScaleZ += z;
             transformations.Children.Add(scaleTransform);
             model3DGroup.Transform = transformations;
         }
