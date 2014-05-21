@@ -418,27 +418,27 @@ namespace KinectStudienarbeitWpf
                 switch (e.Key)
                 {
                     case Key.W:
-                        mainModel.translate(0, 0.01, 0, false);
+                        mainModel.translate(0, 0.01, 0, true);
                         break;
 
                     case Key.S:
-                        mainModel.translate(0, -0.01, 0, false);
+                        mainModel.translate(0, -0.01, 0, true);
                         break;
 
                     case Key.D:
-                        mainModel.translate(0.01, 0, 0, false);
+                        mainModel.translate(0.01, 0, 0, true);
                         break;
 
                     case Key.A:
-                        mainModel.translate(-0.01, 0, 0, false);
+                        mainModel.translate(-0.01, 0, 0, true);
                         break;
 
                     case Key.E:
-                        mainModel.translate(0, 0, -0.01, false);
+                        mainModel.translate(0, 0, -0.01, true);
                         break;
 
                     case Key.Q:
-                        mainModel.translate(0, 0, 0.01, false);
+                        mainModel.translate(0, 0, 0.01, true);
                         break;
                 }
             }

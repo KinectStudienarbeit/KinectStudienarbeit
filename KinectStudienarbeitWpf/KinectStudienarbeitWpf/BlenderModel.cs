@@ -181,9 +181,6 @@ namespace KinectStudienarbeitWpf
             double ytmp = offsetY + matrixTransform.Matrix.OffsetY;
             double ztmp = offsetZ + matrixTransform.Matrix.OffsetZ;
 
-            //Console.WriteLine(lochX1 + " " + xtmp + " " + lochX2 + " " + lochY1 + " " + ytmp + " " + lochY2);
-            Console.WriteLine((xtmp >= lochX1) + " " + (xtmp <= lochX2) + " " + (ytmp <= lochY1) + " " + (ytmp > lochY2));
-
             if (!safe || (xtmp < Room.BOARDER_X_P && xtmp > Room.BOARDER_X_N && ytmp < Room.BOARDER_Y_P && ytmp > Room.BOARDER_Y_N && ztmp < Room.BOARDER_Z_P && ztmp > Room.BOARDER_Z_N))
             {
                 

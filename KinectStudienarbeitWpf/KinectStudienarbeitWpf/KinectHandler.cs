@@ -133,6 +133,12 @@ namespace KinectStudienarbeitWpf
 
             //Console.WriteLine(zMin + " " + pointRight.Depth + " " + zMax);
 
+            if (zMax == -1 && zMin == -1)
+            {
+                zMax = pointRight.Depth + 400;
+                zMin = pointRight.Depth - 400;
+            }
+
             if (pointRight.Depth > zMax)     //adapt the Z-Range if the player goes out of it
             {
                 zMax = pointRight.Depth;
@@ -165,6 +171,7 @@ namespace KinectStudienarbeitWpf
             }
             else
             {
+                oldAngle = -1;
                 mainWindow.setHandMarkers(pointRight.X, pointRight.Y, pointLeft.X, pointLeft.Y, false);
             }
 

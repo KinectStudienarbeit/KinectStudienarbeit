@@ -32,7 +32,7 @@
 
             <Viewport3D.Camera>
                 <PerspectiveCamera
-                    Position="0,0,5"
+                    Position="0,0,4"
                     LookDirection="0,0,-30"
                     FieldOfView="90"/>
             </Viewport3D.Camera>
