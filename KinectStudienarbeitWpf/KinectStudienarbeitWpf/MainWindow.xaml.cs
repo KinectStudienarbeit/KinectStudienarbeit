@@ -370,8 +370,12 @@ namespace KinectStudienarbeitWpf
         /// <param name="e"></param>
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if(mainModel == null) mainModel = mainRoom.currentElement.model;
-
+            if (mainModel == null)
+            {
+                mainModel = mainRoom.currentElement.model;
+                
+            }
+            mainRoom.currentElement.checkCoords();
             switch (e.Key)
             {
                 case Key.Y:

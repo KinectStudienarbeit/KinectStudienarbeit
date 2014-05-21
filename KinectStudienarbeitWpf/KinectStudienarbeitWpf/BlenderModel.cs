@@ -206,7 +206,7 @@ namespace KinectStudienarbeitWpf
                 }
             }
 
-            //Console.WriteLine(offsetX + " " + offsetY + " " + offsetZ + " " + angle);
+            Console.WriteLine(offsetX + " " + offsetY + " " + offsetZ + " " + angle);
         }
 
         private Matrix3D CalculateRotationMatrix(double x, double y, double z)      //taken from http://stackoverflow.com/questions/2042214/wpf-3d-rotate-a-model-around-its-own-axes

@@ -16,6 +16,7 @@ namespace KinectStudienarbeitWpf
         private List<double> coordsY_down = new List<double>();
         public BlenderModel model;
         private bool cyclic = false;
+        
 
         public Element(BlenderModel model)
         {
@@ -38,40 +39,31 @@ namespace KinectStudienarbeitWpf
                 case "Quader":
                     for (int i = 0; i < 360; i += 90)
                     {
-                        addCoords(i, -0.51, -0.24, -0.49, -0.26);
+                        addCoords(i, -0.53, -0.22, -0.47, -0.28);
                     }
-                    //addCoords(0, -0.51, -0.24, -0.49, -0.26);
-                    //addCoords(90, -0.51, -0.24, -0.49, -0.26);
-                    //addCoords(180, -0.51, -0.24, -0.49, -0.26);
-                    //addCoords(270, -0.51, -0.24, -0.49, -0.26);
                     break;
                 case "Fuenfeck":
                     addCoords(0, -0.01, 0.28, 0.02, 0.25);
                     break;
                 case "Kreuz":
-                    addCoords(0, -0.01, -0.25, 0, -0.26);
-                    addCoords(90, -0.01, -0.25, 0, -0.26);
-                    addCoords(180, -0.01, -0.24, 0, -0.25);
-                    addCoords(270, -0.01, -0.25, 0, -0.26);
+                    for (int i = 0; i < 360; i += 90)
+                    {
+                        addCoords(i, -0.02, -0.24, 0.01, -0.27);
+                    }
+
                     break;
                 case "Dreieck":
-                    addCoords(5.5, 0.49, 0.23, 0.51, 0.21);
+                    addCoords(5, 0.48, 0.24, 0.51, 0.21);
                     break;
                 case "Sechseck":
                     for (int i = 30; i < 360; i += 60)
                     {
-                        addCoords(i, 0.49, -0.24, 0.51, -0.26);
+                        addCoords(i, 0.48, -0.23, 0.52, -0.27);
                     }
-                    //addCoords(30, 0.49, -0.24, 0.51, -0.26);
-                    //addCoords(90, 0.49, -0.24, 0.51, -0.26);
-                    //addCoords(150, 0.49, -0.24, 0.51, -0.26);
-                    //addCoords(210, 0.49, -0.24, 0.51, -0.26);
-                    //addCoords(270, 0.49, -0.24, 0.51, -0.26);
-                    //addCoords(330, 0.49, -0.24, 0.51, -0.26);
                     break;
                 case "Kreis":
                     cyclic = true;
-                    addCoords(0, -0.51, 0.26, -0.49, 0.24);
+                    addCoords(0, -0.53, 0.28, -0.47, 0.22);
                     break;
             }
         }
@@ -85,45 +77,23 @@ namespace KinectStudienarbeitWpf
                     break;
                 case "Kreuz":
                     model.rotate(0, -90, 0);
-                    model.scale(-0.85, -0.89, -0.85);
+                    model.scale(-0.87, -0.91, -0.87);
                     break;
                 case "Sechseck":
                     model.rotate(0, 90, 0);
                     model.rotate(0, 0, 90);
-                    model.scale(-0.8, -0.675, -0.8);
+                    model.scale(-0.81, -0.685, -0.81);
                     break;
                 case "Dreieck":
                     model.rotate(0, 0, 5.5);
-                    model.scale(-0.85, -0.78, -0.85);
+                    model.rotate(0, 2.5, 0);
+                    model.scale(-0.86, -0.78, -0.86);
+
                     break;
                 default:
-                    model.scale(-0.8, -0.8, -0.8);
+                    model.scale(-0.82, -0.82, -0.82);
                     break;
             }
-            //if (model.index == "Fuenfeck")
-            //{
-            //    model.scale(-0.898, -0.882, -0.898);
-            //}
-            //else if (model.index == "Kreuz")
-            //{
-            //    model.rotate(0, -90, 0);
-            //    model.scale(-0.85, -0.89, -0.85);
-            //}
-            //else if (model.index == "Sechseck")
-            //{
-            //    model.rotate(0, 90, 0);
-            //    model.rotate(0, 0, 90);
-            //    model.scale(-0.8, -0.675, -0.8);
-            //}
-            //else if (model.index == "Dreieck")
-            //{
-            //    model.rotate(0, 0, 5.5);
-            //    model.scale(-0.85, -0.78, -0.85);
-            //}
-            //else
-            //{
-            //    model.scale(-0.8, -0.8, -0.8);
-            //}
         }
 
         public void translate(double x, double y, double z)
@@ -183,28 +153,39 @@ namespace KinectStudienarbeitWpf
             return returnVal;
         }
 
-        private void checkCoords()
+        public void checkCoords()
         {
-            double i;
-            double a;
-            for (i = Math.Round(model.angle) - 5; i <  Math.Round(model.angle) + 5; i++)
+            if (cyclic)
             {
-                if(angles.Contains((a = Math.Abs(i))))
-                {
-                    List<double> l = getCoords(a);
-                    model.lochX1 = l[0];
-                    model.lochY1 = l[1];
-                    model.lochX2 = l[2];
-                    model.lochY2 = l[3];
-
-                    return;
-                }
+                List<double> l = getCoords(0);
+                model.lochX1 = l[0];
+                model.lochY1 = l[1];
+                model.lochX2 = l[2];
+                model.lochY2 = l[3];
             }
+            else
+            {
+                double i;
+                double a;
+                for (i = Math.Round(model.angle) - 10; i < Math.Round(model.angle) + 10; i++)
+                {
+                    if (angles.Contains((a = Math.Abs(i))))
+                    {
+                        List<double> l = getCoords(a);
+                        model.lochX1 = l[0];
+                        model.lochY1 = l[1];
+                        model.lochX2 = l[2];
+                        model.lochY2 = l[3];
 
-            model.lochX1 = -1;
-            model.lochY1 = -1;
-            model.lochX2 = -1;
-            model.lochY2 = -1;
+                        return;
+                    }
+                }
+
+                model.lochX1 = -1;
+                model.lochY1 = -1;
+                model.lochX2 = -1;
+                model.lochY2 = -1;
+            }
         }
     }
 }

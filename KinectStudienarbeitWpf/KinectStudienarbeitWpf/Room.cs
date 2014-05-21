@@ -67,10 +67,10 @@ namespace KinectStudienarbeitWpf
             elementList.Add(new Element(dictionary, "Sechseck"));
             elementList.Add(new Element(dictionary, "Dreieck"));
 
-            currentElement = elementList[4];
+            currentElement = elementList[5];
             currentElement.model.addToViewport(mainViewport);
 
-            currentElement.translate(0, 0,3);
+            currentElement.translate(0, 0, 3);
         }
 
         public void rotateCurrentElement(double angle)
