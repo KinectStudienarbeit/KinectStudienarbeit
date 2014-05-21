@@ -20,6 +20,14 @@ namespace KinectStudienarbeitWpf
         private double offsetX = 0;
         private double offsetY = 0;
         private double offsetZ = 0;
+        public double angle = 0;
+        public String index;
+        private Element parentElement;
+
+        public double lochX1 = -1;
+        public double lochY1 = -1;
+        public double lochX2 = -1;
+        public double lochY2 = -1;
 
         //######## right coordinates logic should be moved to room #####
         private bool rightCoords = false;
@@ -45,6 +53,7 @@ namespace KinectStudienarbeitWpf
             model3DGroup = resourceDictionary[index] as Model3DGroup;
             modelVisual3D = new ModelVisual3D();
             modelVisual3D.Content = model3DGroup;
+            this.index = index;
 
         }
 
@@ -83,7 +92,7 @@ namespace KinectStudienarbeitWpf
         /// <param name="z"></param>
         public void rotate(double x, double y, double z)
         {
-            rotate(x, y, z, true);
+            rotate(x, y, z, false);
         }
 
         /// <summary>
@@ -95,11 +104,14 @@ namespace KinectStudienarbeitWpf
         /// <param name="safe">True if too high values should be ignored, false otherwise</param>
         public void rotate(double x, double y, double z, bool safe)
         {
-            if(safe && (Math.Abs(x) > 50 || Math.Abs(y) > 50 || Math.Abs(z) > 50)) return;  //ignore if safe is checked and any operation is > 50
+            if(safe && (Math.Abs(x) > 20 || Math.Abs(y) > 20 || Math.Abs(z) > 20)) return;  //ignore if safe is checked and any operation is > 50
             MatrixTransform3D matrixTransform = new MatrixTransform3D();
             matrixTransform.Matrix = CalculateRotationMatrix(x, y, z);
             transformations.Children.Add(matrixTransform);
             model3DGroup.Transform = transformations;
+            angle += z;
+            angle = Math.Abs(angle) % 360;
+
         }
 
         /// <summary>
@@ -118,6 +130,16 @@ namespace KinectStudienarbeitWpf
             model3DGroup.Transform = transformations;
         }
 
+        public void translateAbsolute(double x, double y, double z, bool safe)
+        {
+            if (x < 0 || x > 640 || y < 0 || y > 480) return;   //return if the coords are not on screen
+            translate(((x - 320) * Room.FACTOR_X) - offsetX, 0, 0, safe);  //separate x/y from z so you ca still move on the surface of the wall
+            translate(0, -(y - 240) * Room.FACTOR_Y - offsetY, 0, safe);
+            //translate(0, 0, (z - Room.kinectZmin - 250) * Room.FACTOR_Z - offsetZ, safe);
+            translate(0, 0,-(offsetZ- z * Room.FACTOR_Z - Room.BOARDER_Z_N), safe);
+            //Console.WriteLine(z + " " + z * Room.FACTOR_Z);
+        }
+
         /// <summary>
         /// Translates (moves) the model in 3D space using absolute values from the kinect for x and y, and a set value range for z
         /// </summary>
@@ -126,9 +148,7 @@ namespace KinectStudienarbeitWpf
         /// <param name="z">z-coordinate to translate to</param>
         public void translateAbsolute(double x, double y, double z)
         {
-            if (x < 0 || x > 640 || y < 0 || y > 480) return;   //return if the coords are not on screen
-            translate(((x - 320) * Room.FACTOR_X) - offsetX, -(y - 240) * Room.FACTOR_Y - offsetY, 0);  //separate x/y from z so you ca still move on the surface of the wall
-            translate(0, 0,(z - Room.kinectZmin - 250)* Room.FACTOR_Z - offsetZ);
+            translateAbsolute(x, y, z, false);
         }
 
         /// <summary>
@@ -139,7 +159,7 @@ namespace KinectStudienarbeitWpf
         /// <param name="z">Movement in z-direction</param>
         public void translate(double x, double y, double z)
         {
-            translate(x, y, z, true);
+            translate(x, y, z, false);
         }
 
         /// <summary>
@@ -150,7 +170,7 @@ namespace KinectStudienarbeitWpf
         /// <param name="z">Movement in z-direction</param>
         /// <param name="safe">True if too high values should be ignored, false otherwise</param>
         public void translate(double x, double y, double z, bool safe)
-        {
+        {          
             if (safe && (x > 20 || y > 20 || z > 20))
             {
                 return;
@@ -160,12 +180,18 @@ namespace KinectStudienarbeitWpf
             double xtmp = offsetX + matrixTransform.Matrix.OffsetX;
             double ytmp = offsetY + matrixTransform.Matrix.OffsetY;
             double ztmp = offsetZ + matrixTransform.Matrix.OffsetZ;
-            if (!safe || (offsetX + matrixTransform.Matrix.OffsetX < Room.BOARDER_X_P && offsetX + matrixTransform.Matrix.OffsetX > Room.BOARDER_X_N && offsetY + matrixTransform.Matrix.OffsetY < Room.BOARDER_Y_P && offsetY + matrixTransform.Matrix.OffsetY > Room.BOARDER_Y_N && offsetZ + matrixTransform.Matrix.OffsetZ < Room.BOARDER_Z_P && offsetZ + matrixTransform.Matrix.OffsetZ > Room.BOARDER_Z_N))
+
+            //Console.WriteLine(lochX1 + " " + xtmp + " " + lochX2 + " " + lochY1 + " " + ytmp + " " + lochY2);
+            Console.WriteLine((xtmp >= lochX1) + " " + (xtmp <= lochX2) + " " + (ytmp <= lochY1) + " " + (ytmp > lochY2));
+
+            if (!safe || (xtmp < Room.BOARDER_X_P && xtmp > Room.BOARDER_X_N && ytmp < Room.BOARDER_Y_P && ytmp > Room.BOARDER_Y_N && ztmp < Room.BOARDER_Z_P && ztmp > Room.BOARDER_Z_N))
             {
+                
                 //######## right coordinates logic should be moved to room #####
-                if (xtmp > Room.LOCH_X_L && xtmp < Room.LOCH_X_R && ytmp > Room.LOCH_Y_U && ytmp < Room.LOCH_Y_O)
+                if (xtmp >= lochX1 && xtmp <= lochX2 && ytmp <= lochY1 && ytmp >= lochY2)
                 {
                     rightCoords = true;
+
                 }
                 else rightCoords = false;
 
@@ -182,6 +208,8 @@ namespace KinectStudienarbeitWpf
                     model3DGroup.Transform = transformations;
                 }
             }
+
+            //Console.WriteLine(offsetX + " " + offsetY + " " + offsetZ + " " + angle);
         }
 
         private Matrix3D CalculateRotationMatrix(double x, double y, double z)      //taken from http://stackoverflow.com/questions/2042214/wpf-3d-rotate-a-model-around-its-own-axes
@@ -211,6 +239,8 @@ namespace KinectStudienarbeitWpf
         {
             return model3DGroup.Bounds;
         }
+
+        
 
     }
 }

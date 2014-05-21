@@ -54,6 +54,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Element.cs" />
+    <Compile Include="KinectHandler.cs" />
     <Compile Include="Room.cs" />
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
@@ -68,7 +70,11 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="Spielraumblend4.xaml">
+    <Page Include="Spielraumblend13.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Spielraumblend15.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

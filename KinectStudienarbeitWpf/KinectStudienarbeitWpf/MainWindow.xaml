@@ -17,7 +17,7 @@
         </StackPanel>
         <StackPanel>
             <Label x:Name="Label_KinectStatusHeading" Content="Kinect Status:" HorizontalAlignment="Left" Margin="10,204,0,0" VerticalAlignment="Top"/>
-            <Label x:Name="Label_KinectStatus" Content="disconnected" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
+            <Label x:Name="Label_KinectStatus" Content="Disconnected" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
         </StackPanel>
 
         <StackPanel>
@@ -39,22 +39,30 @@
 
             <ModelVisual3D>
                 <ModelVisual3D.Content>
-                    <DirectionalLight 
-        				Direction="0, -2, -10"
+                    <Model3DGroup>
+                        <AmbientLight Color="#666666" />
+                        <DirectionalLight 
+        				Direction="0, -1, -2"
         				Color="White"/>
+                        <PointLight
+                            Position="0,1,5"
+                            Range="2"
+                            Color="White"/>
+                    </Model3DGroup>
                 </ModelVisual3D.Content>
+
             </ModelVisual3D>
 
 
 
         </Viewport3D>
         <Grid x:Name="grid">
-            
+
 
             <Line Name="line" Visibility="Hidden" Stroke="Red" StrokeThickness="1" />
         </Grid>
         <Label x:Name="Label_Start" Content="Label" HorizontalAlignment="Left" Margin="403,276,0,0" VerticalAlignment="Top" FontSize="72"/>
-        
+
         <Canvas x:Name="ImageColorCanvas" HorizontalAlignment="Left" Height="192" Margin="10,474,0,0" VerticalAlignment="Top" Width="256">
             <Image x:Name="ImageColorStream" HorizontalAlignment="Left" Height="192" VerticalAlignment="Top" Width="256" />
             <Ellipse x:Name="Ellipse_LeftHand" Height="10" Width="10" Fill="#FF7575C1"/>
