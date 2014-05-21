@@ -37,7 +37,7 @@ namespace KinectStudienarbeitWpf
             switch (model.index)
             {
                 case "Quader":
-                    for (int i = 0; i < 360; i += 90)
+                    for (int i = -270; i < 360; i += 90)
                     {
                         addCoords(i, -0.53, -0.22, -0.47, -0.28);
                     }
@@ -46,7 +46,7 @@ namespace KinectStudienarbeitWpf
                     addCoords(0, -0.01, 0.28, 0.02, 0.25);
                     break;
                 case "Kreuz":
-                    for (int i = 0; i < 360; i += 90)
+                    for (int i = -270; i < 360; i += 90)
                     {
                         addCoords(i, -0.02, -0.24, 0.01, -0.27);
                     }
@@ -54,9 +54,10 @@ namespace KinectStudienarbeitWpf
                     break;
                 case "Dreieck":
                     addCoords(5, 0.48, 0.24, 0.51, 0.21);
+                    addCoords(-355, 0.48, 0.24, 0.51, 0.21);
                     break;
                 case "Sechseck":
-                    for (int i = 30; i < 360; i += 60)
+                    for (int i = -330; i < 360; i += 60)
                     {
                         addCoords(i, 0.48, -0.23, 0.52, -0.27);
                     }
@@ -106,6 +107,7 @@ namespace KinectStudienarbeitWpf
         {
             checkCoords();
             model.translateAbsolute(x, y, z, true);
+            
         }
 
         public void rotate(double angle)

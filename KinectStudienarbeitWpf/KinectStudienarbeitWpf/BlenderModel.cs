@@ -22,7 +22,6 @@ namespace KinectStudienarbeitWpf
         private double offsetZ = 0;
         public double angle = 0;
         public String index;
-        private Element parentElement;
 
         public double lochX1 = -1;
         public double lochY1 = -1;
@@ -110,7 +109,7 @@ namespace KinectStudienarbeitWpf
             transformations.Children.Add(matrixTransform);
             model3DGroup.Transform = transformations;
             angle += z;
-            angle = Math.Abs(angle) % 360;
+            angle %= 360;
 
         }
 
@@ -232,9 +231,9 @@ namespace KinectStudienarbeitWpf
         /// Returns the bounding box of the model
         /// </summary>
         /// <returns>The bounding box of the model</returns>
-        public Rect3D getBounds()
+        public double getZ()
         {
-            return model3DGroup.Bounds;
+            return offsetZ;
         }
 
         

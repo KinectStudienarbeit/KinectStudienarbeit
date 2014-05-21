@@ -128,22 +128,25 @@ namespace KinectStudienarbeitWpf
 
             CoordinateMapper mapper = new CoordinateMapper(mainKinectSensor);     //mapper between skeleton and depth image
 
-            DepthImagePoint pointHead = mapper.MapSkeletonPointToDepthPoint(mainSkeleton.Joints[JointType.Head].Position, DepthImageFormat.Resolution640x480Fps30);
-
-
-            if (!corrected && pointHead.Y < 100)
+            if (!corrected)
             {
-                mainKinectSensor.ElevationAngle += Convert.ToInt32((120 - pointHead.Y) / TILT_FACTOR);
-                corrected = true;
-                return;
-            }
-            if (!corrected && pointHead.Y > 140)
-            {
-                mainKinectSensor.ElevationAngle -= Convert.ToInt32((pointHead.Y - 120) / TILT_FACTOR);
-                corrected = true;
-                return;
-            }
+                DepthImagePoint pointHead = mapper.MapSkeletonPointToDepthPoint(mainSkeleton.Joints[JointType.Head].Position, DepthImageFormat.Resolution640x480Fps30);
 
+
+                if (pointHead.Y < 100)
+                {
+                    mainKinectSensor.ElevationAngle += Convert.ToInt32((120 - pointHead.Y) / TILT_FACTOR);
+                    corrected = true;
+                    return;
+                }
+                if (pointHead.Y > 140)
+                {
+                    mainKinectSensor.ElevationAngle -= Convert.ToInt32((pointHead.Y - 120) / TILT_FACTOR);
+                    corrected = true;
+                    return;
+                }
+
+            }
             corrected = true;
 
             DepthImagePoint pointRight = mapper.MapSkeletonPointToDepthPoint(mainSkeleton.Joints[JointType.HandRight].Position, DepthImageFormat.Resolution640x480Fps30); //get the right hand
