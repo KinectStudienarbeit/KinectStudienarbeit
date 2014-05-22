@@ -29,17 +29,45 @@ namespace KinectStudienarbeitWpf
         SolidColorBrush brushGreen = new SolidColorBrush(Colors.Green);
         SolidColorBrush brushBlue = new SolidColorBrush(Colors.Blue);
         Room mainRoom;
-
-        BlenderResourceDictionary mainDictionary = null;
-        BlenderModel mainModel = null;
-        KinectSensor mainKinect = null;
+        KinectHandler mainKinectHandler = null;
         DispatcherTimer time = null;
         int secs = 0;
+        int round = 0;
+        int[] timeCount = new int[4];
+        String textBoxString = "Round 1\nReady?\n";
+        String levelLabelString = "Level: easy";
+
+        public MainWindow()
+        {
+            this.Left = 5;
+            this.Top = 5;
+            InitializeComponent();
+            TextBlock_Message.Visibility = System.Windows.Visibility.Hidden;
+            mainViewPort.Visibility = System.Windows.Visibility.Hidden;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            mainRoom = new Room(this);
+            mainKinectHandler = new KinectHandler(this, mainRoom);
+            mainKinectHandler.absolute = new ChooseModus(this).show();
+            MessageBoxResult mbr;
+            mbr = MessageBox.Show("Press OK to start", "", MessageBoxButton.OK);
+            if (mbr == MessageBoxResult.OK) mainKinectHandler.tutorial = true;
+            mainViewPort.Visibility = System.Windows.Visibility.Visible;
+            secs = 5;
+            time = new DispatcherTimer();
+            time.Interval = new TimeSpan(0, 0, 1);
+            time.Tick += time_Tick_Countdown;
+            TextBlock_Message.Text = textBoxString + secs.ToString();
+            TextBlock_Message.Visibility = System.Windows.Visibility.Visible;
+            time.Start();
+        }
 
         public void displayMessage(String message)
         {
-            Label_Start.Content = message;
-            Label_Start.Visibility = System.Windows.Visibility.Visible;
+            TextBlock_Message.Text = message;
+            TextBlock_Message.Visibility = System.Windows.Visibility.Visible;
         }
 
         public void displayColorFrame(BitmapSource bitmapSource)
@@ -70,47 +98,84 @@ namespace KinectStudienarbeitWpf
             Label_KinectStatus.Content = status;
         }
 
-        public MainWindow()
+        void startGame()
         {
-            InitializeComponent();
-            Label_Start.Visibility = System.Windows.Visibility.Hidden;
+            mainRoom.chooseNewElement();
+            TextBlock_Message.Visibility = System.Windows.Visibility.Hidden;
+            time = new DispatcherTimer();
+            time.Interval = new TimeSpan(0, 0, 1);
+            time.Tick += time_Tick;
+            secs = 0;
+            Label_Level.Content = levelLabelString;
+            Label_Time.Content = "Time: " + secs.ToString() + "s";
+            time.Start();
+            mainKinectHandler.playing = true;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        public void startNextRound()
         {
+            time.Stop();
+            mainKinectHandler.playing = false;
+            timeCount[round] = secs;
+            secs = 10;
+            round++;
+            switch (round)
+            {
+                case 1:
+                    mainRoom.difficult = true;
+                    mainKinectHandler.rotation = true;
+                    textBoxString = "Time: " + timeCount[0].ToString() + "s\nRound 2\nReady?\n";
+                    TextBlock_Message.Text = textBoxString + secs;
+                    TextBlock_Message.Visibility = System.Windows.Visibility.Visible;
+                    time = new DispatcherTimer();
+                    time.Interval = new TimeSpan(0, 0, 1);
+                    time.Tick += time_Tick_Countdown;
+                    time.Start();
+                    break;
+                case 2:
+                    mainKinectHandler.changeModus();
+                    mainRoom.difficult = false;
+                    mainKinectHandler.rotation = false;
+                    textBoxString = "Time: " + timeCount[1].ToString() + "s\nModus Change! Round 1\nReady?\n";
+                    TextBlock_Message.Text = textBoxString + secs;
+                    TextBlock_Message.Visibility = System.Windows.Visibility.Visible;
+                    time = new DispatcherTimer();
+                    time.Interval = new TimeSpan(0, 0, 1);
+                    time.Tick += time_Tick_Countdown;
+                    time.Start();
+                    break;
+                case 3:
+                    mainRoom.difficult = true;
+                    mainKinectHandler.rotation = true;
+                    textBoxString = "Time: " + timeCount[2].ToString() + "s\nRound 2\nReady?\n";
+                    TextBlock_Message.Text = textBoxString + secs;
+                    TextBlock_Message.Visibility = System.Windows.Visibility.Visible;
+                    time = new DispatcherTimer();
+                    time.Interval = new TimeSpan(0, 0, 1);
+                    time.Tick += time_Tick_Countdown;
+                    time.Start();
+                    break;
+                default:
+                    TextBlock_Message.Text = "Thank you for playing!\nR1: " + timeCount[0].ToString() + "s   R2: " + timeCount[1].ToString() + "s\n\nR1: " + timeCount[2].ToString() + "s   R2: " + timeCount[3].ToString() + "s";
+                    TextBlock_Message.Visibility = System.Windows.Visibility.Visible;
+                    break;
 
-            mainRoom = new Room(this);
-            KinectHandler k = new KinectHandler(this, mainRoom);
+            }
 
-            this.Left = 5;
-            this.Top = 5;
+        }
 
-            //initializeKinect();
-            //Console.WriteLine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName);
-            //mainDictionary = new BlenderResourceDictionary(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Spielraumblend4.xaml");
-
-            //BlenderModel raum = new BlenderModel(mainDictionary, "Raum");
-            //raum.addToViewport(this.mainViewPort);
-            //raum.rotate(-90, 0, 0, false);
-            //raum.rotate(0, -90, 0, false);
-            //raum.translate(0, -0.5, -8, false);
-            //raum.scale(0.05, 0.52, -0.5);
-            //raum.translate(0, 0, 7, false);
-
-            //BlenderModel wand = new BlenderModel(mainDictionary, "Wand");
-            //wand.addToViewport(this.mainViewPort);
-            //wand.rotate(0, -90, 0, false);
-            //wand.rotate(0, 0, -90, false);
-            //wand.scale(-0.8, -0.8, -0.8);
-            //wand.translate(1.15, -0.6, 2.4, false);
-
-            //mainModel = new BlenderModel(mainDictionary, "Quader");
-            //mainModel.addToViewport(this.mainViewPort);
-            //mainModel.scale(-0.8, -0.8, -0.8);
-            //mainModel.translate(0, 0, 2.86, false);
-
-
-
+        private void time_Tick_Countdown(object sender, EventArgs e)
+        {
+            if (secs > 0)
+            {
+                secs--;
+                TextBlock_Message.Text = textBoxString + secs.ToString();
+            }
+            else
+            {
+                time.Stop();
+                startGame();
+            }
         }
 
         /// <summary>
@@ -121,156 +186,12 @@ namespace KinectStudienarbeitWpf
         void time_Tick(object sender, EventArgs e)
         {
             secs++;
+            Label_Time.Content = "Time: " + secs.ToString() + "s";
         }
 
-        /// <summary>
-        /// Deals with the keyboard input
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        public void displayElement(int number)
         {
-            if (mainModel == null)
-            {
-                mainModel = mainRoom.currentElement.model;
-                
-            }
-            mainRoom.currentElement.checkCoords();
-            switch (e.Key)
-            {
-                case Key.Y:
-                    mainModel.scale(0, 0, 0.5);
-                    break;
-                case Key.X:
-                    mainModel.scale(0, 0, -0.5);
-                    break;
-            }
-
-            if (mainModel == null) return;
-
-            if (Radio_Rotate.IsChecked.Value)
-            {
-                switch (e.Key)
-                {
-                    case Key.W:
-                        mainModel.rotate(-5, 0, 0);
-                        break;
-
-                    case Key.S:
-                        mainModel.rotate(5, 0, 0);
-                        break;
-
-                    case Key.D:
-                        mainModel.rotate(0, 5, 0);
-                        break;
-
-                    case Key.A:
-                        mainModel.rotate(0, -5, 0);
-                        break;
-
-                    case Key.E:
-                        mainModel.rotate(0, 0, -5);
-                        break;
-
-                    case Key.Q:
-                        mainModel.rotate(0, 0, 5);
-                        break;
-                }
-            }
-            else if (Radio_Translate.IsChecked.Value)
-            {
-                switch (e.Key)
-                {
-                    case Key.W:
-                        mainModel.translate(0, 0.01, 0, true);
-                        break;
-
-                    case Key.S:
-                        mainModel.translate(0, -0.01, 0, true);
-                        break;
-
-                    case Key.D:
-                        mainModel.translate(0.01, 0, 0, true);
-                        break;
-
-                    case Key.A:
-                        mainModel.translate(-0.01, 0, 0, true);
-                        break;
-
-                    case Key.E:
-                        mainModel.translate(0, 0, -0.01, true);
-                        break;
-
-                    case Key.Q:
-                        mainModel.translate(0, 0, 0.01, true);
-                        break;
-                }
-            }
+            Label_Element.Content = "Element: " + number.ToString() + "/6";
         }
-
-        /// <summary>
-        /// Logic of the test GUI...
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Button_Browse_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "XAML files (*.xaml)|*.xaml";
-            openFileDialog.ShowDialog();
-            Textbox_File.Text = openFileDialog.FileName;
-        }
-
-        /// <summary>
-        /// Logic of the test GUI...
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Button_Load_Click(object sender, RoutedEventArgs e)
-        {
-            if (!File.Exists(Textbox_File.Text))
-            {
-                MessageBox.Show("Could not find file " + Textbox_File.Text + "!");
-            }
-            else
-            {
-                mainDictionary = new BlenderResourceDictionary(Textbox_File.Text);
-                ComboBox_Models.Items.Clear();
-                foreach (String s in mainDictionary.keyList)
-                {
-                    ComboBox_Models.Items.Add(s);
-                }
-                ComboBox_Models.SelectedItem = ComboBox_Models.Items[0];
-                MessageBox.Show("File loaded successfully!");
-            }
-
-        }
-
-        /// <summary>
-        /// Logic of the test GUI...
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ComboBox_Models_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (mainModel != null)
-            {
-                mainModel.removeFromViewport(this.mainViewPort);
-            }
-
-            mainModel = new BlenderModel(mainDictionary, ComboBox_Models.SelectedItem as String);
-            mainModel.addToViewport(this.mainViewPort);
-        }
-
-        /// <summary>
-        /// Logic of the test GUI...
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Radio_Kinect_Checked(object sender, RoutedEventArgs e)
-        {
-            //probably to be removed
-        }
-
     }
 }

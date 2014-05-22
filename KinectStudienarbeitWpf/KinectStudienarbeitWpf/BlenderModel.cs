@@ -134,9 +134,7 @@ namespace KinectStudienarbeitWpf
             if (x < 0 || x > 640 || y < 0 || y > 480) return;   //return if the coords are not on screen
             translate(((x - 320) * Room.FACTOR_X) - offsetX, 0, 0, safe);  //separate x/y from z so you ca still move on the surface of the wall
             translate(0, -(y - 240) * Room.FACTOR_Y - offsetY, 0, safe);
-            //translate(0, 0, (z - Room.kinectZmin - 250) * Room.FACTOR_Z - offsetZ, safe);
             translate(0, 0,-(offsetZ- z * Room.FACTOR_Z - Room.BOARDER_Z_N), safe);
-            //Console.WriteLine(z + " " + z * Room.FACTOR_Z);
         }
 
         /// <summary>
@@ -205,7 +203,7 @@ namespace KinectStudienarbeitWpf
                 }
             }
 
-            Console.WriteLine(offsetX + " " + offsetY + " " + offsetZ + " " + angle);
+            //Console.WriteLine(offsetX + " " + offsetY + " " + offsetZ + " " + angle);
         }
 
         private Matrix3D CalculateRotationMatrix(double x, double y, double z)      //taken from http://stackoverflow.com/questions/2042214/wpf-3d-rotate-a-model-around-its-own-axes
@@ -236,7 +234,13 @@ namespace KinectStudienarbeitWpf
             return offsetZ;
         }
 
-        
+        public void resetTransformations()
+        {
+            transformations = new Transform3DGroup();
+            offsetX = 0;
+            offsetY = 0;
+            offsetZ = 0;
+        }
 
     }
 }

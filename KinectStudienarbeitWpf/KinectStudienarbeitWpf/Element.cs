@@ -21,14 +21,14 @@ namespace KinectStudienarbeitWpf
         public Element(BlenderModel model)
         {
             this.model = model;
-            setTransformation();
+            setTransformations();
             setAngles();
         }
 
         public Element(BlenderResourceDictionary dictionary, String index)
         {
             model = new BlenderModel(dictionary, index);
-            setTransformation();
+            setTransformations();
             setAngles();
         }
 
@@ -69,8 +69,10 @@ namespace KinectStudienarbeitWpf
             }
         }
 
-        private void setTransformation()
+        private void setTransformations()
         {
+            model.resetTransformations();
+
             switch (model.index)
             {
                 case "Fuenfeck":

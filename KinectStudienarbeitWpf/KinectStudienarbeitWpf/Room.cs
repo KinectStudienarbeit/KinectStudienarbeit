@@ -23,8 +23,10 @@ namespace KinectStudienarbeitWpf
         public const double FACTOR_X = Room.BOARDER_X_P / 320D * 2;
         public const double FACTOR_Y = Room.BOARDER_Y_P / 240D * 2;
         public const double FACTOR_Z = (Room.BOARDER_Z_P - BOARDER_Z_N) / 800;
+        public bool difficult;
 
         MainWindow mainWindow;
+        BlenderResourceDictionary mainDictionairy;
         List<Element> elementList = new List<Element>();
         public Element currentElement;
         
@@ -32,20 +34,20 @@ namespace KinectStudienarbeitWpf
         public Room(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
-            BlenderResourceDictionary dictionary = new BlenderResourceDictionary(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Spielraumblend15.xaml");
-            BlenderModel roomModel = new BlenderModel(dictionary, "Raum");
+            mainDictionairy = new BlenderResourceDictionary(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Spielraumblend15.xaml");
+            BlenderModel roomModel = new BlenderModel(mainDictionairy, "Raum");
             roomModel.rotate(-90, 0, 0);
             roomModel.rotate(0, -90, 0);
             roomModel.translate(0, -0.5, 3);
             roomModel.scale(-0.2, 0, 0);
 
-            BlenderModel wallModel = new BlenderModel(dictionary, "Wand");
+            BlenderModel wallModel = new BlenderModel(mainDictionairy, "Wand");
             wallModel.rotate(0, -90, 0);
             wallModel.rotate(0, 0, -90);
             wallModel.scale(-0.75, -0.75, -0.75);
-            wallModel.translate(0, 0, 1.9);         
+            wallModel.translate(0, 0, 1.9);
 
-            BlenderModel wallPartModel = new BlenderModel(dictionary, "Wand_Teil");
+            BlenderModel wallPartModel = new BlenderModel(mainDictionairy, "Wand_Teil");
             wallPartModel.rotate(0, -90, 0);
             wallPartModel.rotate(0, 0, -90);
             wallPartModel.scale(-0.75, -0.75, -0.75);
@@ -56,17 +58,20 @@ namespace KinectStudienarbeitWpf
             wallModel.addToViewport(mainWindow.mainViewPort);
             wallPartModel.addToViewport(mainWindow.mainViewPort);
 
-            elementList.Add(new Element(dictionary, "Kreis"));
-            elementList.Add(new Element(dictionary, "Quader"));
-            elementList.Add(new Element(dictionary, "Fuenfeck"));
-            elementList.Add(new Element(dictionary, "Kreuz"));
-            elementList.Add(new Element(dictionary, "Sechseck"));
-            elementList.Add(new Element(dictionary, "Dreieck"));
-
-            chooseNewElement();
+            populateElementList();
         }
 
-        private void chooseNewElement()
+        void populateElementList()
+        {
+            elementList.Add(new Element(mainDictionairy, "Kreis"));
+            elementList.Add(new Element(mainDictionairy, "Quader"));
+            elementList.Add(new Element(mainDictionairy, "Fuenfeck"));
+            elementList.Add(new Element(mainDictionairy, "Kreuz"));
+            elementList.Add(new Element(mainDictionairy, "Sechseck"));
+            elementList.Add(new Element(mainDictionairy, "Dreieck"));
+        }
+
+        public void chooseNewElement()
         {
             Random r = new Random();
             int i = r.Next(elementList.Count);
@@ -74,25 +79,44 @@ namespace KinectStudienarbeitWpf
             currentElement.translate(0, 0, 3);
             currentElement.model.addToViewport(mainWindow.mainViewPort);
             elementList.RemoveAt(i);
+            if (difficult)
+            {
+                currentElement.model.rotate(0, 0, r.Next(360));
+            }
+            mainWindow.displayElement(6 - elementList.Count);
         }
 
         public void rotateCurrentElement(double angle)
         {
-            currentElement.rotate(angle);
+            if(currentElement.model.getZ() > WALL_Z) currentElement.rotate(angle);
         }
 
         public void translateCurrentElementAbsolute(double x, double y, double z)
         {
             currentElement.translateAbsolute(x, y, z);
-            if (currentElement.model.getZ() < WALL_Z - 0.2)
-            {
-                chooseNewElement();
-            }
+            checkZ();
         }
 
         public void translateCurrentElementRelative(double x, double y, double z)
         {
             currentElement.translate(x, y, z);
+            checkZ();
+        }
+
+        private void checkZ()
+        {
+            if (currentElement.model.getZ() < WALL_Z - 0.35)
+            {
+                if (elementList.Count == 0)
+                {
+                    populateElementList();
+                    mainWindow.startNextRound();
+                }
+                else
+                {
+                    chooseNewElement();
+                }
+            }
         }
     }
 }

@@ -1,0 +1,11 @@
+﻿<Window x:Class="KinectStudienarbeitWpf.ChooseModus"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Choose Modus" Height="300" Width="300" ResizeMode="NoResize" WindowStyle="None">
+    <Grid>
+        <Label Content="Choose the modus to start with:" HorizontalAlignment="Left" Margin="48,66,0,0" VerticalAlignment="Top"/>
+        <Button Content="Absolute" HorizontalAlignment="Left" Margin="39,145,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Button Content="Relative" HorizontalAlignment="Left" Margin="152,145,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
+
+    </Grid>
+</Window>

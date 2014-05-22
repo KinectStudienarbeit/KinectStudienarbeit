@@ -54,9 +54,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChooseModus.xaml.cs">
+      <DependentUpon>ChooseModus.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Element.cs" />
     <Compile Include="KinectHandler.cs" />
     <Compile Include="Room.cs" />
+    <Page Include="ChooseModus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
