@@ -127,6 +127,7 @@ namespace KinectStudienarbeitWpf
                     textBoxString = "Time: " + timeCount[0].ToString() + "s\nRound 2\nReady?\n";
                     TextBlock_Message.Text = textBoxString + secs;
                     TextBlock_Message.Visibility = System.Windows.Visibility.Visible;
+                    levelLabelString = "Level: hard";
                     time = new DispatcherTimer();
                     time.Interval = new TimeSpan(0, 0, 1);
                     time.Tick += time_Tick_Countdown;
@@ -139,6 +140,7 @@ namespace KinectStudienarbeitWpf
                     textBoxString = "Time: " + timeCount[1].ToString() + "s\nModus Change! Round 1\nReady?\n";
                     TextBlock_Message.Text = textBoxString + secs;
                     TextBlock_Message.Visibility = System.Windows.Visibility.Visible;
+                    levelLabelString = "Level: easy";
                     time = new DispatcherTimer();
                     time.Interval = new TimeSpan(0, 0, 1);
                     time.Tick += time_Tick_Countdown;
@@ -150,6 +152,7 @@ namespace KinectStudienarbeitWpf
                     textBoxString = "Time: " + timeCount[2].ToString() + "s\nRound 2\nReady?\n";
                     TextBlock_Message.Text = textBoxString + secs;
                     TextBlock_Message.Visibility = System.Windows.Visibility.Visible;
+                    levelLabelString = "Level: hard";
                     time = new DispatcherTimer();
                     time.Interval = new TimeSpan(0, 0, 1);
                     time.Tick += time_Tick_Countdown;

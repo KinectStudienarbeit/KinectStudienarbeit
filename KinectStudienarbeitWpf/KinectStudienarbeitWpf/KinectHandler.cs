@@ -137,19 +137,18 @@ namespace KinectStudienarbeitWpf
             {
                 DepthImagePoint pointHead = mapper.MapSkeletonPointToDepthPoint(mainSkeleton.Joints[JointType.Head].Position, DepthImageFormat.Resolution640x480Fps30);
 
-
-                //if (pointHead.Y < 100)
-                //{
-                //    mainKinectSensor.ElevationAngle += Convert.ToInt32((120 - pointHead.Y) / TILT_FACTOR);
-                //    corrected = true;
-                //    return;
-                //}
-                //if (pointHead.Y > 140)
-                //{
-                //    mainKinectSensor.ElevationAngle -= Convert.ToInt32((pointHead.Y - 120) / TILT_FACTOR);
-                //    corrected = true;
-                //    return;
-                //}
+                if (pointHead.Y < 100)
+                {
+                    mainKinectSensor.ElevationAngle += Convert.ToInt32((120 - pointHead.Y) / TILT_FACTOR);
+                    corrected = true;
+                    return;
+                }
+                if (pointHead.Y > 140)
+                {
+                    mainKinectSensor.ElevationAngle -= Convert.ToInt32((pointHead.Y - 120) / TILT_FACTOR);
+                    corrected = true;
+                    return;
+                }
 
             }
             corrected = true;
