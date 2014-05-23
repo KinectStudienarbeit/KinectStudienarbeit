@@ -48,6 +48,7 @@ namespace KinectStudienarbeitWpf
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            Button_Skip.IsEnabled = false;
             mainRoom = new Room(this);
             mainKinectHandler = new KinectHandler(this, mainRoom);
             mainKinectHandler.absolute = new ChooseModus(this).show();
@@ -62,6 +63,7 @@ namespace KinectStudienarbeitWpf
             TextBlock_Message.Text = textBoxString + secs.ToString();
             TextBlock_Message.Visibility = System.Windows.Visibility.Visible;
             time.Start();
+            //startNextRound();
         }
 
         public void displayMessage(String message)
@@ -100,6 +102,7 @@ namespace KinectStudienarbeitWpf
 
         void startGame()
         {
+            Button_Skip.IsEnabled = true;
             mainRoom.chooseNewElement();
             TextBlock_Message.Visibility = System.Windows.Visibility.Hidden;
             time = new DispatcherTimer();
@@ -114,6 +117,7 @@ namespace KinectStudienarbeitWpf
 
         public void startNextRound()
         {
+            Button_Skip.IsEnabled = false;
             time.Stop();
             mainKinectHandler.playing = false;
             timeCount[round] = secs;
@@ -195,6 +199,11 @@ namespace KinectStudienarbeitWpf
         public void displayElement(int number)
         {
             Label_Element.Content = "Element: " + number.ToString() + "/6";
+        }
+
+        private void Button_Skip_Click(object sender, RoutedEventArgs e)
+        {
+            mainRoom.skipElement();
         }
     }
 }

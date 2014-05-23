@@ -48,7 +48,7 @@ namespace KinectStudienarbeitWpf
                 mainWindow.displayKinectStatus(mainKinectSensor.Status.ToString());
 
 
-                //mainKinect.SkeletonStream.TrackingMode = SkeletonTrackingMode.Seated;
+                mainKinectSensor.SkeletonStream.TrackingMode = SkeletonTrackingMode.Seated;
 
                 mainKinectSensor.ColorStream.Enable();
 
@@ -59,6 +59,7 @@ namespace KinectStudienarbeitWpf
                 mainKinectSensor.AllFramesReady += mainKinect_AllFramesReady;
                 mainKinectSensor.ColorFrameReady += mainKinect_ColorFrameReady;
                 mainKinectSensor.Start();
+                //mainKinectSensor.ElevationAngle = 0;
             }
             catch (Exception)
             {
@@ -220,7 +221,7 @@ namespace KinectStudienarbeitWpf
                 oldx = pointRight.X;
                 oldy = pointRight.Y;
                 oldz = pointRight.Depth;
-            }
+            }            
         }
 
         /// <summary>

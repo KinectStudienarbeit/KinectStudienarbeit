@@ -46,5 +46,6 @@
         <Label x:Name="Label_Level" Content="Level: easy" HorizontalAlignment="Left" Margin="10,52,0,0" VerticalAlignment="Top" FontSize="24"/>
         <Label x:Name="Label_Time" Content="Time: 0s" HorizontalAlignment="Left" Margin="10,146,0,0" VerticalAlignment="Top" FontSize="24"/>
         <Label x:Name="Label_Element" Content="Element: 1/6" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" FontSize="24"/>
+        <Button x:Name="Button_Skip" Content="Skip Element" HorizontalAlignment="Left" Height="50" Margin="10,352,0,0" VerticalAlignment="Top" Width="142" FontSize="16" Click="Button_Skip_Click"/>
     </Grid>
 </Window>

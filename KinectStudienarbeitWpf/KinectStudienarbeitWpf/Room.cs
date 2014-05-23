@@ -103,6 +103,21 @@ namespace KinectStudienarbeitWpf
             checkZ();
         }
 
+        public void skipElement()
+        {
+            if (elementList.Count == 0)
+            {
+                currentElement.model.removeFromViewport(mainWindow.mainViewPort);
+                populateElementList();
+                mainWindow.startNextRound();
+            }
+            else
+            {
+                currentElement.model.removeFromViewport(mainWindow.mainViewPort);
+                chooseNewElement();
+            }
+        }
+
         private void checkZ()
         {
             if (currentElement.model.getZ() < WALL_Z - 0.35)

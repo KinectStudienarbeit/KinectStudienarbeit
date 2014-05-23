@@ -48,7 +48,7 @@ namespace KinectStudienarbeitWpf
                 case "Kreuz":
                     for (int i = -270; i < 360; i += 90)
                     {
-                        addCoords(i, -0.02, -0.24, 0.01, -0.27);
+                        addCoords(i, -0.03, -0.23, 0.02, -0.28);
                     }
 
                     break;
