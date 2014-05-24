@@ -25,17 +25,17 @@ namespace KinectStudienarbeitWpf
     /// </summary>
     public partial class MainWindow : Window
     {
-        SolidColorBrush brushRed = new SolidColorBrush(Colors.Red);
-        SolidColorBrush brushGreen = new SolidColorBrush(Colors.Green);
-        SolidColorBrush brushBlue = new SolidColorBrush(Colors.Blue);
-        Room mainRoom;
-        KinectHandler mainKinectHandler = null;
-        DispatcherTimer time = null;
-        int secs = 0;
-        int round = 0;
-        int[] timeCount = new int[4];
-        String textBoxString = "Round 1\nReady?\n";
-        String levelLabelString = "Level: easy";
+        private SolidColorBrush brushRed = new SolidColorBrush(Colors.Red);
+        private SolidColorBrush brushGreen = new SolidColorBrush(Colors.Green);
+        private SolidColorBrush brushBlue = new SolidColorBrush(Colors.Blue);
+        private Room mainRoom;
+        private KinectHandler mainKinectHandler = null;
+        private DispatcherTimer time = null;
+        private int secs = 0;
+        private int round = 0;
+        private int[] timeCount = new int[4];
+        private String textBoxString = "Round 1\nReady?\n";
+        private String levelLabelString = "Level: easy";
 
         public MainWindow()
         {
@@ -66,12 +66,6 @@ namespace KinectStudienarbeitWpf
             //startNextRound();
         }
 
-        public void displayMessage(String message)
-        {
-            TextBlock_Message.Text = message;
-            TextBlock_Message.Visibility = System.Windows.Visibility.Visible;
-        }
-
         public void displayColorFrame(BitmapSource bitmapSource)
         {
             ImageColorStream.Source = bitmapSource;
@@ -100,7 +94,7 @@ namespace KinectStudienarbeitWpf
             Label_KinectStatus.Content = status;
         }
 
-        void startGame()
+        private void startGame()
         {
             Button_Skip.IsEnabled = true;
             mainRoom.chooseNewElement();
@@ -196,7 +190,7 @@ namespace KinectStudienarbeitWpf
             Label_Time.Content = "Time: " + secs.ToString() + "s";
         }
 
-        public void displayElement(int number)
+        public void displayElementNumber(int number)
         {
             Label_Element.Content = "Element: " + number.ToString() + "/6";
         }

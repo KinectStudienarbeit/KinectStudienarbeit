@@ -57,15 +57,6 @@ namespace KinectStudienarbeitWpf
         }
 
         /// <summary>
-        /// Returns the current coordinates of the model
-        /// </summary>
-        /// <returns>Point3D with the current coordinates of the model</returns>
-        public Point3D getCoords()
-        {
-            return new Point3D(offsetX, offsetY, offsetZ);
-        }
-
-        /// <summary>
         /// adds the model to the given Viewport
         /// </summary>
         /// <param name="viewport">The used Viewport to add the model to</param>
@@ -134,7 +125,7 @@ namespace KinectStudienarbeitWpf
             if (x < 0 || x > 640 || y < 0 || y > 480) return;   //return if the coords are not on screen
             translate(((x - 320) * Room.FACTOR_X) - offsetX, 0, 0, safe);  //separate x/y from z so you ca still move on the surface of the wall
             translate(0, -(y - 240) * Room.FACTOR_Y - offsetY, 0, safe);
-            translate(0, 0,-(offsetZ- z * Room.FACTOR_Z - Room.BOARDER_Z_N), safe);
+            translate(0, 0,-(offsetZ- z * Room.FACTOR_Z - Room.ROOM_Z1), safe);
         }
 
         /// <summary>
@@ -178,7 +169,7 @@ namespace KinectStudienarbeitWpf
             double ytmp = offsetY + matrixTransform.Matrix.OffsetY;
             double ztmp = offsetZ + matrixTransform.Matrix.OffsetZ;
 
-            if (!safe || (xtmp < Room.BOARDER_X_P && xtmp > Room.BOARDER_X_N && ytmp < Room.BOARDER_Y_P && ytmp > Room.BOARDER_Y_N && ztmp < Room.BOARDER_Z_P && ztmp > Room.BOARDER_Z_N))
+            if (!safe || (xtmp < Room.ROOM_X2 && xtmp > Room.ROOM_X1 && ytmp < Room.ROOM_Y2 && ytmp > Room.ROOM_Y1 && ztmp < Room.ROOM_Z2 && ztmp > Room.ROOM_Z1))
             {
                 
                 //######## right coordinates logic should be moved to room #####

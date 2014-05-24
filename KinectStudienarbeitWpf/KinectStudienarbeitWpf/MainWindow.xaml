@@ -42,7 +42,7 @@
             <Ellipse x:Name="Ellipse_RightHand" Fill="#FF21B435" Height="10" Width="10"/>
         </Canvas>
 
-        <TextBlock x:Name="TextBlock_Message" HorizontalAlignment="Left" Margin="386,84,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="488" Width="618" FontSize="72" FontWeight="Bold" TextAlignment="Center" Background="#FFE6E6E6"/>
+        <TextBlock x:Name="TextBlock_Message" HorizontalAlignment="Left" Margin="285,84,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="488" Width="870" FontSize="72" FontWeight="Bold" TextAlignment="Center" Background="#FFE6E6E6"/>
         <Label x:Name="Label_Level" Content="Level: easy" HorizontalAlignment="Left" Margin="10,52,0,0" VerticalAlignment="Top" FontSize="24"/>
         <Label x:Name="Label_Time" Content="Time: 0s" HorizontalAlignment="Left" Margin="10,146,0,0" VerticalAlignment="Top" FontSize="24"/>
         <Label x:Name="Label_Element" Content="Element: 1/6" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" FontSize="24"/>

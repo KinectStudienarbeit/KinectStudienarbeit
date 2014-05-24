@@ -10,10 +10,10 @@ namespace KinectStudienarbeitWpf
     {
         public List<double> angles = new List<double>();
 
-        private List<double> coordsX_left = new List<double>();
-        private List<double> coordsX_right = new List<double>();
-        private List<double> coordsY_up = new List<double>();
-        private List<double> coordsY_down = new List<double>();
+        private List<double> coordsX1 = new List<double>();
+        private List<double> coordsX2 = new List<double>();
+        private List<double> coordsY1 = new List<double>();
+        private List<double> coordsY2 = new List<double>();
         public BlenderModel model;
         private bool cyclic = false;
         
@@ -117,13 +117,13 @@ namespace KinectStudienarbeitWpf
             model.rotate(0, 0, angle, true);
         }
 
-        public void addCoords(double angle, double coordX_left, double coordY_up, double coordX_right, double coordY_down)
+        private void addCoords(double angle, double x1, double y1, double x2, double y2)
         {
             angles.Add(angle);
-            this.coordsX_left.Add(coordX_left);
-            this.coordsX_right.Add(coordX_right);
-            this.coordsY_down.Add(coordY_down);
-            this.coordsY_up.Add(coordY_up);
+            this.coordsX1.Add(x1);
+            this.coordsX2.Add(x2);
+            this.coordsY2.Add(y2);
+            this.coordsY1.Add(y1);
         }
 
         public List<double> getCoords(double angle)
@@ -132,13 +132,13 @@ namespace KinectStudienarbeitWpf
 
             if (cyclic)
             {
-                returnVal.Add(coordsX_left[0]);
-                returnVal.Add(coordsY_up[0]);
-                returnVal.Add(coordsX_right[0]);
-                returnVal.Add(coordsY_down[0]);
+                returnVal.Add(coordsX1[0]);
+                returnVal.Add(coordsY1[0]);
+                returnVal.Add(coordsX2[0]);
+                returnVal.Add(coordsY2[0]);
                 return returnVal;
             }
-            if (angles.Count != coordsX_left.Count || coordsY_down.Count != coordsY_up.Count || angles.Count != coordsY_up.Count)
+            if (angles.Count != coordsX1.Count || coordsY2.Count != coordsY1.Count || angles.Count != coordsY1.Count)
             {
                 Exception e = new Exception("The angle and coordinate count does not match up! Cannot return correct coords");
                 throw e;
@@ -150,14 +150,14 @@ namespace KinectStudienarbeitWpf
             }
 
             int index = angles.IndexOf(angle);
-            returnVal.Add(coordsX_left[index]);
-            returnVal.Add(coordsY_up[index]);
-            returnVal.Add(coordsX_right[index]);
-            returnVal.Add(coordsY_down[index]);
+            returnVal.Add(coordsX1[index]);
+            returnVal.Add(coordsY1[index]);
+            returnVal.Add(coordsX2[index]);
+            returnVal.Add(coordsY2[index]);
             return returnVal;
         }
 
-        public void checkCoords()
+        private void checkCoords()
         {
             if (cyclic)
             {

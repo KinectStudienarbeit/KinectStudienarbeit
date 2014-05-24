@@ -13,16 +13,16 @@ namespace KinectStudienarbeitWpf
     /// </summary>
     class Room
     {
-        public const double BOARDER_X_N = -0.87;
-        public const double BOARDER_X_P = 0.87;
-        public const double BOARDER_Y_N = -0.3;
-        public const double BOARDER_Y_P = 0.31;
-        public const double BOARDER_Z_N = 1.86;
-        public const double BOARDER_Z_P = 3.39;
+        public const double ROOM_X1 = -0.87;
+        public const double ROOM_X2 = 0.87;
+        public const double ROOM_Y1 = -0.3;
+        public const double ROOM_Y2 = 0.31;
+        public const double ROOM_Z1 = 1.86;
+        public const double ROOM_Z2 = 3.39;
         public const double WALL_Z = 2.35;
-        public const double FACTOR_X = Room.BOARDER_X_P / 320D * 2;
-        public const double FACTOR_Y = Room.BOARDER_Y_P / 240D * 2;
-        public const double FACTOR_Z = (Room.BOARDER_Z_P - BOARDER_Z_N) / 800;
+        public const double FACTOR_X = Room.ROOM_X2 / 320D * 2;
+        public const double FACTOR_Y = Room.ROOM_Y2 / 240D * 2;
+        public const double FACTOR_Z = (Room.ROOM_Z2 - ROOM_Z1) / 800;
         public bool difficult;
 
         MainWindow mainWindow;
@@ -61,7 +61,7 @@ namespace KinectStudienarbeitWpf
             populateElementList();
         }
 
-        void populateElementList()
+        private void populateElementList()
         {
             elementList.Add(new Element(mainDictionairy, "Kreis"));
             elementList.Add(new Element(mainDictionairy, "Quader"));
@@ -83,7 +83,7 @@ namespace KinectStudienarbeitWpf
             {
                 currentElement.model.rotate(0, 0, r.Next(360));
             }
-            mainWindow.displayElement(6 - elementList.Count);
+            mainWindow.displayElementNumber(6 - elementList.Count);
         }
 
         public void rotateCurrentElement(double angle)

@@ -11,17 +11,17 @@ namespace KinectStudienarbeitWpf
 {
     class KinectHandler
     {
-        KinectSensor mainKinectSensor;
-        double oldx = -1;
-        double oldy = -1;
-        double oldz = -1;
-        double oldAngle = -1;
-        double zMax = -1;
-        double zMin = -1;
+        private KinectSensor mainKinectSensor;
+        private double oldx = -1;
+        private double oldy = -1;
+        private double oldz = -1;
+        private double oldAngle = -1;
+        private double zMax = -1;
+        private double zMin = -1;
         public bool absolute = true;
-        MainWindow mainWindow;
-        Room room;
-        bool corrected = false;
+        private MainWindow mainWindow;
+        private Room room;
+        private bool corrected = false;
         public bool playing = false;
         public bool tutorial = false;
         public bool rotation = false;
@@ -33,18 +33,18 @@ namespace KinectStudienarbeitWpf
         {
             this.mainWindow = mainWindow;
             this.room = room;
-            initializeKinect();
+            initializeKinectSensor();
         }
 
         /// <summary>
         /// Initilizes the Kinect
         /// </summary>
-        private void initializeKinect()
+        private void initializeKinectSensor()
         {
             try
             {
                 mainKinectSensor = KinectSensor.KinectSensors.FirstOrDefault();
-                KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
+                KinectSensor.KinectSensors.StatusChanged += kinectSensors_StatusChanged;
                 mainWindow.displayKinectStatus(mainKinectSensor.Status.ToString());
 
 
@@ -56,8 +56,8 @@ namespace KinectStudienarbeitWpf
 
 
                 mainKinectSensor.DepthStream.Enable();
-                mainKinectSensor.AllFramesReady += mainKinect_AllFramesReady;
-                mainKinectSensor.ColorFrameReady += mainKinect_ColorFrameReady;
+                mainKinectSensor.AllFramesReady += mainKinectSensor_AllFramesReady;
+                mainKinectSensor.ColorFrameReady += mainKinectSensor_ColorFrameReady;
                 mainKinectSensor.Start();
                 //mainKinectSensor.ElevationAngle = 0;
             }
@@ -73,7 +73,7 @@ namespace KinectStudienarbeitWpf
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void mainKinect_ColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
+        private void mainKinectSensor_ColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
         {
             using (ColorImageFrame frame = e.OpenColorImageFrame())
             {
@@ -96,7 +96,7 @@ namespace KinectStudienarbeitWpf
         /// </summary>
         /// <param name="e"></param>
         /// <returns></returns>
-        Skeleton getFirstSkeleton(AllFramesReadyEventArgs e)
+        private Skeleton getFirstSkeleton(AllFramesReadyEventArgs e)
         {
             using (SkeletonFrame skeletonFrameData = e.OpenSkeletonFrame())
             {
@@ -124,7 +124,7 @@ namespace KinectStudienarbeitWpf
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void mainKinect_AllFramesReady(object sender, AllFramesReadyEventArgs e)
+        private void mainKinectSensor_AllFramesReady(object sender, AllFramesReadyEventArgs e)
         {
             if (!tutorial) return;
 
@@ -229,11 +229,11 @@ namespace KinectStudienarbeitWpf
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void KinectSensors_StatusChanged(object sender, StatusChangedEventArgs e)
+        private void kinectSensors_StatusChanged(object sender, StatusChangedEventArgs e)
         {
             if (e.Status == KinectStatus.Connected)
             {
-                initializeKinect();
+                initializeKinectSensor();
             }
             mainWindow.displayKinectStatus(e.Status.ToString());
         }
